@@ -7,8 +7,8 @@
 #include "Shader.h"
 
 //window vars
-int Wheight = 900;
-int Wwidth = 900;
+int Wheight = 600;
+int Wwidth = 800;
 
 unsigned int VBO, VAO, EBO;
 unsigned int texture1, texture2;
@@ -26,16 +26,20 @@ extern "C" void motion(int xpos, int ypos){
 
 
 extern "C" void display() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // clear the window
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // clear the window
     //activate the textures
+
+    // bind textures on corresponding texture units
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture1);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, texture2);
     //switch to the square vertex buffer
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     ourShader->use();
 
-	glutSwapBuffers();
+    glutSwapBuffers();
 }
 
 void idle() {
@@ -102,7 +106,7 @@ void setupMenu() {
 }
 
 //creates the buffers 
-void myinit() {
+void init() {
 
     // build and compile our shader zprogram
     // ------------------------------------
@@ -174,21 +178,51 @@ void myinit() {
         exit(1);
     }
     stbi_image_free(data);
-    
+
+    // texture 2
+     // ---------
+    glGenTextures(1, &texture2);
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    // set the texture wrapping parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // set texture filtering parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // load image, create texture and generate mipmaps
+    textloc = "resources/textures/awesomeface.png";
+    data = stbi_load(textloc.c_str(), &width, &height, &nrChannels, 0);
+    if (data)
+    {
+        // note that the awesomeface.png has transparency and thus an alpha channel, so make sure to tell OpenGL the data type is of GL_RGBA
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    stbi_image_free(data);
+
 
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     // -------------------------------------------------------------------------------------------
     ourShader->use(); // don't forget to activate/use the shader before setting uniforms!
-    // either set it manually like so:
-    glUniform1i(glGetUniformLocation(ourShader->ID, "texture1"), 0);
-    // or set it via the texture class
-    //ourShader->setInt("texture2", 1);
-
+    ourShader->setInt("texture1", 0);
+    ourShader->setInt("texture2", 1);
 }
 
 //creates the objects that are to be used in the program
-void init() {
-	glClearColor(0.0, 0.0, 0.0, 1.0); //  background
+void myinit() {
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glClearColor(0.0, 0.0, 0.0, 1.0); //  background
+    glutWarpPointer(Wwidth / 2, Wheight / 2);
+
+    ourShader = new Shader("texture.vs", "texture.fs");
+    std::cout << "openGL version " << glGetString(GL_VERSION) << std::endl;
+    std::cout << "glut version " << glutGet(GLUT_VERSION) << std::endl;
 
 }
 
@@ -209,13 +243,8 @@ int main(int argc, char** argv) {
 	glutMenuStatusFunc(menustatus);
 
 	glewInit();
-    ourShader = new Shader("texture.vs", "texture.fs");
-	glutWarpPointer(450, 450);
+    myinit();
 	init();
-	myinit();
-	glEnable(GL_DEPTH_TEST);
-	std::cout << "openGL version " << glGetString(GL_VERSION) << std::endl;
-	std::cout << "glut version " << glutGet(GLUT_VERSION) << std::endl;
 	glutMainLoop();
 	return(EXIT_SUCCESS);
 }

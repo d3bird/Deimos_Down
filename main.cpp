@@ -4,7 +4,9 @@
 #include <stb_image.h>
 #include <iostream>
 #include <string>
+
 #include "Shader.h"
+#include "camera.h"
 
 //window vars
 int Wheight = 600;
@@ -14,13 +16,40 @@ unsigned int VBO, VAO, EBO;
 unsigned int texture1, texture2;
 
 Shader* ourShader;
+Camera* cam;
+
+// camera
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+float lastX = Wheight / 2.0f;
+float lastY = Wwidth / 2.0f;
+bool firstMouse = true;
+
+// timing
+float deltaTime = 1.0f;	// time between current frame and last frame
+float lastFrame = 0.0f;
+
 
 extern "C" void reshape(int width, int height) {
-
+    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)Wwidth / (float)Wheight, 0.1f, 100.0f);
+    ourShader->setMat4("projection", projection);
 }
 
+//if the mouse was moved
 extern "C" void motion(int xpos, int ypos){
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
 
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+    lastX = xpos;
+    lastY = ypos;
+
+    camera.ProcessMouseMovement(xoffset, yoffset);
 	glutPostRedisplay();
 }
 
@@ -44,26 +73,45 @@ extern "C" void display() {
 
 void idle() {
 
+    // camera/view transformation
+    glm::mat4 view = camera.GetViewMatrix();
+    ourShader->setMat4("view", view);
 
     glutPostRedisplay();
 }
 
+//if the mouse was clicked
 extern "C" void mouse(int btn, int state, int xpos, int ypos) {
-
 	glutPostRedisplay();
 }
 
 
 extern "C" void mykey(unsigned char key, int mousex, int mousey) {
 	//float cameraSpeed = 2.5f;
-	switch (key){
-	case 27://hitting the escape key
-	case 'q':
-		exit(0);
-	default:
-		// glutSetWindowTitle(key);
-		break;
-	}
+    switch (key) {
+    case 27://hitting the escape key
+    case 'q':
+        exit(0);
+        break;
+
+    case 'w':
+        camera.ProcessKeyboard(FORWARD, deltaTime);
+        break;
+    case 's':
+        camera.ProcessKeyboard(BACKWARD, deltaTime);
+        break;
+    case 'a':
+        camera.ProcessKeyboard(LEFT, deltaTime);
+        break;
+    case 'd':
+        camera.ProcessKeyboard(RIGHT, deltaTime);
+        break;
+
+
+    default:
+        // glutSetWindowTitle(key);
+        break;
+    }
 
 }
 
@@ -221,9 +269,16 @@ void myinit() {
     glutWarpPointer(Wwidth / 2, Wheight / 2);
 
     ourShader = new Shader("texture.vs", "texture.fs");
+    cam = new Camera();
     std::cout << "openGL version " << glGetString(GL_VERSION) << std::endl;
     std::cout << "glut version " << glutGet(GLUT_VERSION) << std::endl;
 
+
+
+}
+
+void mouse_scroll(int xoffset, int yoffset, int temp, int temp2) {
+    camera.ProcessMouseScroll(yoffset);
 }
 
 int main(int argc, char** argv) {
@@ -239,6 +294,7 @@ int main(int argc, char** argv) {
 	glutKeyboardFunc(mykey);
 	glutPassiveMotionFunc(motion);
 	glutMotionFunc(NULL);
+    glutMouseWheelFunc(mouse_scroll);
 	setupMenu();
 	glutMenuStatusFunc(menustatus);
 

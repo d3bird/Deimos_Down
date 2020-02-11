@@ -25,7 +25,7 @@ unsigned int texture1, texture2;
 
 Shader* ourShader;
 Camera* cam;
-
+Model* ourModel;
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = Wheight / 2.0f;
@@ -67,35 +67,59 @@ extern "C" void display() {
     //activate the textures
 
     // bind textures on corresponding texture units
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture1);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, texture2);
-    //switch to the square vertex buffer
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    //glActiveTexture(GL_TEXTURE0);
+    //glBindTexture(GL_TEXTURE_2D, texture1);
+    //glActiveTexture(GL_TEXTURE1);
+    //glBindTexture(GL_TEXTURE_2D, texture2);
+    ////switch to the square vertex buffer
+    //glBindVertexArray(VAO);
+    //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    //ourShader->use();
+
+
+            // render
+        // ------
+    glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // don't forget to enable shader before setting uniforms
     ourShader->use();
+
+    // view/projection transformations
+    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)Wwidth / (float)Wheight, 0.1f, 100.0f);
+    glm::mat4 view = camera.GetViewMatrix();
+    ourShader->setMat4("projection", projection);
+    ourShader->setMat4("view", view);
+
+    // render the loaded model
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
+    model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
+    ourShader->setMat4("model", model);
+    ourModel->Draw(ourShader);
+
+
 
     glutSwapBuffers();
 }
 
 void idle() {
-    static float temp = 0;
-    float currentFrame =  glutGet(GLUT_ELAPSED_TIME);
-    deltaTime = currentFrame - lastFrame;
-    lastFrame = currentFrame;
-    //cout << deltaTime << endl;
-    // camera/view transformation
-    glm::mat4 view = camera.GetViewMatrix();
-    ourShader->setMat4("view", view);
+    //static float temp = 0;
+    //float currentFrame =  glutGet(GLUT_ELAPSED_TIME);
+    //deltaTime = currentFrame - lastFrame;
+    //lastFrame = currentFrame;
+    ////cout << deltaTime << endl;
+    //// camera/view transformation
+    //glm::mat4 view = camera.GetViewMatrix();
+    //ourShader->setMat4("view", view);
 
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::rotate(model, temp * glm::radians(10.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-    ourShader->setMat4("model", model);
-    temp+=0.001f;
-    if (temp == 360) {
-        temp = 0;
-    }
+    //glm::mat4 model = glm::mat4(1.0f);
+    //model = glm::rotate(model, temp * glm::radians(10.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    //ourShader->setMat4("model", model);
+    //temp+=0.001f;
+    //if (temp == 360) {
+    //    temp = 0;
+    //}
     glutPostRedisplay();
 }
 
@@ -284,9 +308,9 @@ void myinit() {
     glClearColor(0.0, 0.0, 0.0, 1.0); //  background
     glutWarpPointer(Wwidth / 2, Wheight / 2);
 
-    ourShader = new Shader("texture.vs", "texture.fs");
-
-    cam = new Camera();
+   // ourShader = new Shader("texture.vs", "texture.fs");
+    ourShader = new Shader("model_loading.vs", "model_loading.fs");
+    cam = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));;
     cam->printSpeed();
     //cam->setMovespeed(0.001f);
     cam->printSpeed();
@@ -294,6 +318,7 @@ void myinit() {
     std::cout << "glut version " << glutGet(GLUT_VERSION) << std::endl;
     ourShader->use();
 
+     ourModel= new Model("resources/objects/nanosuit/nanosuit.obj");
 
 }
 

@@ -1,4 +1,7 @@
 
+
+
+
 #include <glew.h>
 #include <freeglut.h>
 #include <stb_image.h>
@@ -7,6 +10,8 @@
 
 #include "Shader.h"
 #include "camera.h"
+#include "model.h"
+#include "mesh.h"
 
 using std::cout;
 using std::endl;
@@ -75,7 +80,7 @@ extern "C" void display() {
 }
 
 void idle() {
-
+    static float temp = 0;
     float currentFrame =  glutGet(GLUT_ELAPSED_TIME);
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
@@ -84,6 +89,13 @@ void idle() {
     glm::mat4 view = camera.GetViewMatrix();
     ourShader->setMat4("view", view);
 
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::rotate(model, temp * glm::radians(10.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    ourShader->setMat4("model", model);
+    temp+=0.001f;
+    if (temp == 360) {
+        temp = 0;
+    }
     glutPostRedisplay();
 }
 
@@ -280,7 +292,7 @@ void myinit() {
     cam->printSpeed();
     std::cout << "openGL version " << glGetString(GL_VERSION) << std::endl;
     std::cout << "glut version " << glutGet(GLUT_VERSION) << std::endl;
-
+    ourShader->use();
 
 
 }

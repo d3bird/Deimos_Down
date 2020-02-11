@@ -8,6 +8,9 @@
 #include "Shader.h"
 #include "camera.h"
 
+using std::cout;
+using std::endl;
+
 //window vars
 int Wheight = 600;
 int Wwidth = 800;
@@ -25,7 +28,7 @@ float lastY = Wwidth / 2.0f;
 bool firstMouse = true;
 
 // timing
-float deltaTime = 1.0f;	// time between current frame and last frame
+float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
 
 
@@ -73,6 +76,10 @@ extern "C" void display() {
 
 void idle() {
 
+    float currentFrame =  glutGet(GLUT_ELAPSED_TIME);
+    deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
+    //cout << deltaTime << endl;
     // camera/view transformation
     glm::mat4 view = camera.GetViewMatrix();
     ourShader->setMat4("view", view);
@@ -93,7 +100,6 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
     case 'q':
         exit(0);
         break;
-
     case 'w':
         camera.ProcessKeyboard(FORWARD, deltaTime);
         break;
@@ -106,8 +112,6 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
     case 'd':
         camera.ProcessKeyboard(RIGHT, deltaTime);
         break;
-
-
     default:
         // glutSetWindowTitle(key);
         break;
@@ -269,7 +273,11 @@ void myinit() {
     glutWarpPointer(Wwidth / 2, Wheight / 2);
 
     ourShader = new Shader("texture.vs", "texture.fs");
+
     cam = new Camera();
+    cam->printSpeed();
+    //cam->setMovespeed(0.001f);
+    cam->printSpeed();
     std::cout << "openGL version " << glGetString(GL_VERSION) << std::endl;
     std::cout << "glut version " << glutGet(GLUT_VERSION) << std::endl;
 

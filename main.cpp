@@ -1,17 +1,14 @@
-
-
-
-
 #include <glew.h>
 #include <freeglut.h>
 #include <stb_image.h>
 #include <iostream>
 #include <string>
-
+#include "gui.h"
 #include "Shader.h"
 #include "camera.h"
 #include "model.h"
 #include "mesh.h"
+#include "skydome.h"
 
 using std::cout;
 using std::endl;
@@ -21,11 +18,14 @@ int Wheight = 600;
 int Wwidth = 800;
 
 unsigned int VBO, VAO, EBO;
-unsigned int texture1, texture2;
+unsigned int container, face, logo;
 
 Shader* ourShader;
 Camera* cam;
 Model* ourModel;
+gui* hud;
+skydome* sky;
+
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = Wheight / 2.0f;
@@ -40,6 +40,7 @@ float lastFrame = 0.0f;
 extern "C" void reshape(int width, int height) {
     glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)Wwidth / (float)Wheight, 0.1f, 100.0f);
     ourShader->setMat4("projection", projection);
+    sky->reshape(Wwidth, Wheight);
 }
 
 //if the mouse was moved
@@ -81,7 +82,8 @@ extern "C" void display() {
         // ------
     glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+    
+    /*
     // don't forget to enable shader before setting uniforms
     ourShader->use();
 
@@ -94,32 +96,37 @@ extern "C" void display() {
     // render the loaded model
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
-    model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
+    model = glm::scale(model, glm::vec3(0.02f, 0.02f, 0.02f));	// it's a bit too big for our scene, so scale it down
     ourShader->setMat4("model", model);
     ourModel->Draw(ourShader);
 
+    hud->draw(NULL);
 
+    */
+    sky->update();
+    sky->draw();
 
     glutSwapBuffers();
 }
 
 void idle() {
-    //static float temp = 0;
-    //float currentFrame =  glutGet(GLUT_ELAPSED_TIME);
-    //deltaTime = currentFrame - lastFrame;
-    //lastFrame = currentFrame;
-    ////cout << deltaTime << endl;
-    //// camera/view transformation
-    //glm::mat4 view = camera.GetViewMatrix();
-    //ourShader->setMat4("view", view);
+    static float temp = 0;
+    float currentFrame =  glutGet(GLUT_ELAPSED_TIME);
+    deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
+    //cout << deltaTime << endl;
+    // camera/view transformation
 
-    //glm::mat4 model = glm::mat4(1.0f);
-    //model = glm::rotate(model, temp * glm::radians(10.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-    //ourShader->setMat4("model", model);
-    //temp+=0.001f;
-    //if (temp == 360) {
-    //    temp = 0;
-    //}
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::rotate(model, temp * glm::radians(10.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    ourShader->setMat4("model", model);
+    temp+=1.1f;
+    if (temp == 360) {
+        temp = 0;
+    }
+
+
     glutPostRedisplay();
 }
 
@@ -148,6 +155,9 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
     case 'd':
         camera.ProcessKeyboard(RIGHT, deltaTime);
         break;
+    case '  ':
+        hud->Toggleshow();
+        break;
     default:
         // glutSetWindowTitle(key);
         break;
@@ -163,7 +173,7 @@ extern "C" void menustatus(int status, int x, int y) {
 extern "C" void myMenu(int value) {
 	switch (value) {
 	case 0:
-
+        hud->Toggleshow();
 		break;
 	case 1:
 
@@ -186,63 +196,22 @@ extern "C" void myMenu(int value) {
 // Create menu items
 void setupMenu() {
 	glutCreateMenu(myMenu);
-	glutAddMenuEntry("draw table", 0);
-	glutAddMenuEntry("draw chair", 1);
-	glutAddMenuEntry("draw small table", 3);
-	glutAddMenuEntry("game", 4);
+	glutAddMenuEntry("toggle images", 0);
+	glutAddMenuEntry("", 1);
+	glutAddMenuEntry("", 3);
+	glutAddMenuEntry("", 4);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 
 //creates the buffers 
 void init() {
 
-    // build and compile our shader zprogram
-    // ------------------------------------
-    
-
-    // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
-    float vertices[] = {
-        // positions          // colors           // texture coords
-         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
-    };
-    unsigned int indices[] = {
-        0, 1, 3, // first triangle
-        1, 2, 3  // second triangle
-    };
-
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-    // texture coord attribute
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-
-
     // load and create a texture 
     // -------------------------
-    // texture 1
+    // texture 1: container
     // ---------
-    glGenTextures(1, &texture1);
-    glBindTexture(GL_TEXTURE_2D, texture1);
+    glGenTextures(1, &logo);
+    glBindTexture(GL_TEXTURE_2D, logo);
     // set the texture wrapping parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -266,11 +235,37 @@ void init() {
         exit(1);
     }
     stbi_image_free(data);
+    // texture 2: containe
+// ---------
+    glGenTextures(1, &container);
+    glBindTexture(GL_TEXTURE_2D, container);
+    // set the texture wrapping parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // set texture filtering parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // load image, create texture and generate mipmaps
 
+    stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+    // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
+     textloc = "resources/textures/container.jpg";
+     data = stbi_load(textloc.c_str(), &width, &height, &nrChannels, 0);
+    if (data)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+        exit(1);
+    }
+    stbi_image_free(data);
     // texture 2
      // ---------
-    glGenTextures(1, &texture2);
-    glBindTexture(GL_TEXTURE_2D, texture2);
+    glGenTextures(1, &face);
+    glBindTexture(GL_TEXTURE_2D, face);
     // set the texture wrapping parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -296,8 +291,11 @@ void init() {
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     // -------------------------------------------------------------------------------------------
     ourShader->use(); // don't forget to activate/use the shader before setting uniforms!
-    ourShader->setInt("texture1", 0);
-    ourShader->setInt("texture2", 1);
+
+    //needs to add the textures to the gui
+    hud->setTexture1(container);
+    hud->setTexture2(logo);
+    hud->init();
 }
 
 //creates the objects that are to be used in the program
@@ -308,7 +306,7 @@ void myinit() {
     glClearColor(0.0, 0.0, 0.0, 1.0); //  background
     glutWarpPointer(Wwidth / 2, Wheight / 2);
 
-   // ourShader = new Shader("texture.vs", "texture.fs");
+    // ourShader = new Shader("texture.vs", "texture.fs");
     ourShader = new Shader("model_loading.vs", "model_loading.fs");
     cam = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));;
     cam->printSpeed();
@@ -318,8 +316,12 @@ void myinit() {
     std::cout << "glut version " << glutGet(GLUT_VERSION) << std::endl;
     ourShader->use();
 
-     ourModel= new Model("resources/objects/nanosuit/nanosuit.obj");
+    ourModel = new Model("resources/objects/nanosuit/nanosuit.obj");
 
+    hud = new gui();
+    sky = new skydome();
+    sky->reshape(Wwidth, Wheight);
+   // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void mouse_scroll(int xoffset, int yoffset, int temp, int temp2) {

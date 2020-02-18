@@ -3,7 +3,7 @@
 
 #include <glew.h>
 #include <freeglut.h>
-
+//#include <stb_image.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 

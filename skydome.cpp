@@ -57,7 +57,7 @@ skydome::skydome() {
 void skydome::draw() {
     shader->use();
     glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    //glBindBuffer(GL_ARRAY_BUFFER, buffer);
     glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 }
 

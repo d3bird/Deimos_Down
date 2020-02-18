@@ -82,7 +82,7 @@ extern "C" void display() {
         // ------
     glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
+
     /*
     // don't forget to enable shader before setting uniforms
     ourShader->use();
@@ -99,10 +99,10 @@ extern "C" void display() {
     model = glm::scale(model, glm::vec3(0.02f, 0.02f, 0.02f));	// it's a bit too big for our scene, so scale it down
     ourShader->setMat4("model", model);
     ourModel->Draw(ourShader);
-
-    hud->draw(NULL);
-
     */
+    //hud->draw(NULL);
+
+    sky->setCam(camera.GetViewMatrix());
     sky->update();
     sky->draw();
 
@@ -155,7 +155,7 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
     case 'd':
         camera.ProcessKeyboard(RIGHT, deltaTime);
         break;
-    case '  ':
+    case '1':
         hud->Toggleshow();
         break;
     default:
@@ -321,7 +321,7 @@ void myinit() {
     hud = new gui();
     sky = new skydome();
     sky->reshape(Wwidth, Wheight);
-   // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void mouse_scroll(int xoffset, int yoffset, int temp, int temp2) {
@@ -332,7 +332,7 @@ int main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowSize(Wwidth, Wheight);
-	glutCreateWindow("0.001");
+	glutCreateWindow("0.002");
 	//SetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
 	glutDisplayFunc(display);
 	glutMouseFunc(mouse);

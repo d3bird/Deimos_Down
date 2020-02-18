@@ -29,6 +29,10 @@ public:
 	void tetrahedron(int count);
 
 	void reshape(int width, int height);
+	
+	//setting maticies
+	void setProjection(glm::mat4 i) { shader->setMat4("Projection",i); }
+	void setCam(glm::mat4 i){ shader->setMat4("view", i); }
 
 private:
 

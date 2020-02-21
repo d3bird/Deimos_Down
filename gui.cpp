@@ -27,14 +27,16 @@ void gui::draw(Shader* input_shader) {
             input_shader->use();
         }
 
+        shader->use();
+        glBindVertexArray(VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
         // bind textures on corresponding texture units
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
         //switch to the square vertex buffer
-        shader->use();
-        glBindVertexArray(VAO);
+
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
 
@@ -56,6 +58,27 @@ void gui::init() {
     unsigned int indices[] = {
         0, 1, 3, // first triangle
         1, 2, 3  // second triangle
+    };
+
+    float points[] = {
+    0.5f,  0.5f, 0.0f,
+    0.5f, -0.5f, 0.0f,
+    -0.5f, -0.5f, 0.0f,
+    -0.5f,  0.5f, 0.0f
+    };
+
+    float colors[] = {
+        1.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 1.0f,
+         1.0f, 1.0f, 0.0f,
+    };
+
+    float texcords[] = {
+        1.0f, 1.0f,
+         1.0f, 0.0f,
+          0.0f, 0.0f,
+          0.0f, 1.0f
     };
 
     glGenVertexArrays(1, &VAO);

@@ -64,27 +64,14 @@ extern "C" void motion(int xpos, int ypos){
 
 
 extern "C" void display() {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // clear the window
-    //activate the textures
-
-    // bind textures on corresponding texture units
-    //glActiveTexture(GL_TEXTURE0);
-    //glBindTexture(GL_TEXTURE_2D, texture1);
-    //glActiveTexture(GL_TEXTURE1);
-    //glBindTexture(GL_TEXTURE_2D, texture2);
-    ////switch to the square vertex buffer
-    //glBindVertexArray(VAO);
-    //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    //ourShader->use();
-
-
-            // render
+        // render
         // ------
     glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    /*
+    
     // don't forget to enable shader before setting uniforms
+
     ourShader->use();
 
     // view/projection transformations
@@ -95,16 +82,18 @@ extern "C" void display() {
 
     // render the loaded model
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
-    model = glm::scale(model, glm::vec3(0.02f, 0.02f, 0.02f));	// it's a bit too big for our scene, so scale it down
+    model = glm::translate(model, glm::vec3(-4.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
+    model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
     ourShader->setMat4("model", model);
     ourModel->Draw(ourShader);
-    */
-    //hud->draw(NULL);
+    
+
 
     sky->setCam(camera.GetViewMatrix());
     sky->update();
     sky->draw();
+
+   hud->draw(NULL);
 
     glutSwapBuffers();
 }

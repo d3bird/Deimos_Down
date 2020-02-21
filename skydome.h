@@ -32,7 +32,7 @@ public:
 	
 	//setting maticies
 	void setProjection(glm::mat4 i) { shader->setMat4("Projection",i); }
-	void setCam(glm::mat4 i){ shader->setMat4("view", i); }
+	void setCam(glm::mat4 i) { shader->use(); shader->setMat4("view", i); }
 
 private:
 

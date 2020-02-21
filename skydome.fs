@@ -1,7 +1,8 @@
+#version 330 core
 // per-fragment interpolated values from the vertex shader
-varying  vec3 fN;
-varying  vec3 fL;
-varying  vec3 fE;
+in  vec3 fN;
+in  vec3 fL;
+in  vec3 fE;
 
 uniform vec4 AmbientProduct, DiffuseProduct, SpecularProduct;
 uniform mat4 ModelView;

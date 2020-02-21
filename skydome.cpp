@@ -20,14 +20,15 @@ skydome::skydome() {
 
 
     // set up vertex arrays
-    GLuint vPosition = glGetAttribLocation(program , "vPosition");
-    glEnableVertexAttribArray(vPosition);
-    glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+   // GLuint vPosition = glGetAttribLocation(program , "vPosition");
 
-    GLuint vNormal = glGetAttribLocation(program, "vNormal");
-    glEnableVertexAttribArray(vNormal);
-    glVertexAttribPointer(vNormal, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(points)));
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    glEnableVertexAttribArray(0);
 
+   // GLuint vNormal = glGetAttribLocation(program, "vNormal");
+
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(points)));
+    glEnableVertexAttribArray(1);
     point4 light_position(0.0, 0.0, 2.0, 0.0);
     color4 light_ambient(0.2, 0.2, 0.2, 1.0);
     color4 light_diffuse(0.7, 0.7, 0.7, 1.0);
@@ -57,14 +58,12 @@ skydome::skydome() {
 void skydome::draw() {
     shader->use();
     glBindVertexArray(vao);
-    //glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
     glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 }
 
 void skydome::update() {
    
-    point4 at(0.0, 0.0, 0.0, 1.0);
-    vec4   up(0.0, 1.0, 0.0, 0.0);
 
     static int last_time = glutGet(GLUT_ELAPSED_TIME);
 
@@ -72,12 +71,15 @@ void skydome::update() {
     last_time = glutGet(GLUT_ELAPSED_TIME);
 
     rotation += rot_incr * delta_time / 1000.0;
-    GLfloat z = 4.0 * cos(rotation);
-    GLfloat x = 4.0 * sin(rotation);
-    point4 eye(x, 0.0, z, 1.0);
+    //GLfloat z = 4.0 * cos(rotation);
+    //GLfloat x = 4.0 * sin(rotation);
+    //point4 eye(x, 0.0, z, 1.0);
 
-    mat4 model_view = LookAt(eye, at, up);
-    glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
+    //mat4 model_view = LookAt(eye, at, up);
+    //glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
+
+    glm::mat4 model = glm::mat4(1.0f);
+    shader->setMat4("ModelView", model);
 }
 
 void skydome::triangle(const point4& a, const point4& b, const point4& c)

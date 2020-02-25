@@ -25,7 +25,8 @@ Shader* ourShader;
 Camera* cam;
 Model* ourModel;
 gui* hud;
-skydome* sky;
+
+world* World;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -41,7 +42,7 @@ float lastFrame = 0.0f;
 extern "C" void reshape(int width, int height) {
     glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)Wwidth / (float)Wheight, 0.1f, 100.0f);
     ourShader->setMat4("projection", projection);
-    sky->reshape(Wwidth, Wheight);
+    World->setScreenSize(Wwidth, Wheight);
 }
 
 //if the mouse was moved
@@ -71,8 +72,8 @@ extern "C" void display() {
     ourShader->use();
     ourModel->Draw(ourShader);
 
-    sky->draw();
-
+    //sky->draw();
+    World->draw();
     hud->draw(NULL);
 
     glutSwapBuffers();
@@ -99,9 +100,10 @@ void idle() {
     ourShader->setMat4("model", model);
 
 
-    sky->setCam(camera.GetViewMatrix());
-    sky->update();
-
+    //sky->setCam(camera.GetViewMatrix());
+    //sky->update();
+    World->update_cam(camera.GetViewMatrix());
+    World->update(deltaTime);
     glutPostRedisplay();
 }
 
@@ -296,8 +298,9 @@ void myinit() {
     ourModel = new Model("resources/objects/nanosuit/nanosuit.obj");
 
     hud = new gui();
-    sky = new skydome();
-    sky->reshape(Wwidth, Wheight);
+    //sky = new skydome();
+    World = new world(Wwidth, Wheight, 2);
+    //sky->reshape(Wwidth, Wheight);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 

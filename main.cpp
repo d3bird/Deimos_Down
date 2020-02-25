@@ -9,6 +9,7 @@
 #include "model.h"
 #include "mesh.h"
 #include "skydome.h"
+#include "world.h"
 
 using std::cout;
 using std::endl;
@@ -64,36 +65,15 @@ extern "C" void motion(int xpos, int ypos){
 
 
 extern "C" void display() {
-        // render
-        // ------
     glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    
-    // don't forget to enable shader before setting uniforms
-
     ourShader->use();
-
-    // view/projection transformations
-    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)Wwidth / (float)Wheight, 0.1f, 100.0f);
-    glm::mat4 view = camera.GetViewMatrix();
-    ourShader->setMat4("projection", projection);
-    ourShader->setMat4("view", view);
-
-    // render the loaded model
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(-4.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
-    model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
-    ourShader->setMat4("model", model);
     ourModel->Draw(ourShader);
-    
 
-
-    sky->setCam(camera.GetViewMatrix());
-    sky->update();
     sky->draw();
 
-   hud->draw(NULL);
+    hud->draw(NULL);
 
     glutSwapBuffers();
 }
@@ -107,14 +87,20 @@ void idle() {
     // camera/view transformation
 
 
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::rotate(model, temp * glm::radians(10.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    ourShader->setMat4("model", model);
-    temp+=1.1f;
-    if (temp == 360) {
-        temp = 0;
-    }
+    //create the model transfermation
+    ourShader->use();
 
+    // view/projection transformations
+    ourShader->setMat4("view", camera.GetViewMatrix());
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(-4.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
+    model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
+    ourShader->setMat4("model", model);
+
+
+    sky->setCam(camera.GetViewMatrix());
+    sky->update();
 
     glutPostRedisplay();
 }
@@ -304,7 +290,9 @@ void myinit() {
     std::cout << "openGL version " << glGetString(GL_VERSION) << std::endl;
     std::cout << "glut version " << glutGet(GLUT_VERSION) << std::endl;
     ourShader->use();
-
+    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)Wwidth / (float)Wheight, 0.1f, 100.0f);
+    ourShader->setMat4("projection", projection);
+    ourShader->setMat4("view", camera.GetViewMatrix());
     ourModel = new Model("resources/objects/nanosuit/nanosuit.obj");
 
     hud = new gui();

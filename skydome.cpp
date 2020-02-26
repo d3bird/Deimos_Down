@@ -63,7 +63,7 @@ void skydome::draw() {
 }
 
 void skydome::update() {
-   
+
 
     static int last_time = glutGet(GLUT_ELAPSED_TIME);
 
@@ -79,6 +79,7 @@ void skydome::update() {
     //glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
 
     glm::mat4 model = glm::mat4(1.0f);
+    model = glm::rotate(model, rotation, glm::vec3(0.0, 1.0, 0.0));
     shader->setMat4("ModelView", model);
 }
 

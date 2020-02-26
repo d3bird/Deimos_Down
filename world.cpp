@@ -145,34 +145,34 @@ void world::setupGUI() {
 
 }
 
+//creates and inits the 3d models
 void world::setupModels() {
     //create the skydome
     sky = new skydome();
     sky->reshape(Wwidth, Wheight);
 
-    //imported models
+    //create the differnt shades for the models
     modelShader = new Shader("model_loading.vs", "model_loading.fs");
     modelShader->use();
     //create the nano suit model
     ourModel = new Model("resources/objects/nanosuit/nanosuit.obj");
 }
 
-
-
-
+//update all of the shaders with the cameria change
 void world::update_cam(glm::mat4 i) {
     sky->setCam(i);
     modelShader->use();
     modelShader->setMat4("view",i);
 }
 
+//update the projection matrix of all the shaders
 void world::update_projectio(glm::mat4 i) {
     sky->setProjection(i);
     modelShader->use();
     modelShader->setMat4("projection", i);
 }
 
-
+//update thescreen size varibles for all the objects that depend on them
 void world::setScreenSize(int width, int height) {
      Wwidth = width;
      Wheight = height;

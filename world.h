@@ -32,6 +32,10 @@ public:
 	//getters
 
 
+	//misc functions
+	void toggleHud(){ hud->Toggleshow(); }
+
+
 private:
 
 	void setupGUI();

@@ -108,7 +108,7 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
         camera.ProcessKeyboard(RIGHT, deltaTime);
         break;
     case '1':
-        //hud->Toggleshow();
+        World->toggleHud();
         break;
     default:
         // glutSetWindowTitle(key);
@@ -125,13 +125,13 @@ extern "C" void menustatus(int status, int x, int y) {
 extern "C" void myMenu(int value) {
 	switch (value) {
 	case 0:
-       // hud->Toggleshow();
+        World->toggleHud();
 		break;
 	case 1:
-
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		break;
 	case 3:
-
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		break;
 	case 4:
 
@@ -149,8 +149,8 @@ extern "C" void myMenu(int value) {
 void setupMenu() {
 	glutCreateMenu(myMenu);
 	glutAddMenuEntry("toggle images", 0);
-	glutAddMenuEntry("", 1);
-	glutAddMenuEntry("", 3);
+	glutAddMenuEntry("toggle line draw", 1);
+	glutAddMenuEntry("toggle fill draw", 3);
 	glutAddMenuEntry("", 4);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
@@ -169,7 +169,6 @@ void myinit() {
     glClearColor(0.0, 0.0, 0.0, 1.0); //  background
     glutWarpPointer(Wwidth / 2, Wheight / 2);
 
-
     cam = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));;
     cam->printSpeed();
 
@@ -182,7 +181,6 @@ void myinit() {
     World->update_cam(camera.GetViewMatrix());
     World->update_projectio(projection);
 
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void mouse_scroll(int xoffset, int yoffset, int temp, int temp2) {
@@ -193,7 +191,7 @@ int main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowSize(Wwidth, Wheight);
-	glutCreateWindow("0.002");
+	glutCreateWindow("0.003");
 	//SetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
 	glutDisplayFunc(display);
 	glutMouseFunc(mouse);

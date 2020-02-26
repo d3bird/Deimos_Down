@@ -20,11 +20,7 @@ int Wwidth = 800;
 
 unsigned int VBO, VAO, EBO;
 
-
-//Shader* ourShader;
 Camera* cam;
-//Model* ourModel;
-
 
 world* World;
 
@@ -41,7 +37,6 @@ float lastFrame = 0.0f;
 
 extern "C" void reshape(int width, int height) {
     glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)Wwidth / (float)Wheight, 0.1f, 100.0f);
-    //ourShader->setMat4("projection", projection);
     World->setScreenSize(Wwidth, Wheight);
     World->update_projectio(projection);
 }
@@ -70,11 +65,7 @@ extern "C" void display() {
     glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-
-    //sky->draw();
     World->draw();
-    //hud->draw(NULL);
 
     glutSwapBuffers();
 }
@@ -85,24 +76,6 @@ void idle() {
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
     //cout << deltaTime << endl;
-    // camera/view transformation
-
-    /*
-    //create the model transfermation
-    ourShader->use();
-
-    // view/projection transformations
-    ourShader->setMat4("view", camera.GetViewMatrix());
-
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(-4.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
-    model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
-    ourShader->setMat4("model", model);
-    */
-
-    //sky->setCam(camera.GetViewMatrix());
-    //sky->update();
-
 
     World->update_cam(camera.GetViewMatrix());
     World->update(deltaTime);
@@ -196,20 +169,14 @@ void myinit() {
     glClearColor(0.0, 0.0, 0.0, 1.0); //  background
     glutWarpPointer(Wwidth / 2, Wheight / 2);
 
-    // ourShader = new Shader("texture.vs", "texture.fs");
-    //ourShader = new Shader("model_loading.vs", "model_loading.fs");
+
     cam = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));;
     cam->printSpeed();
-    //cam->setMovespeed(0.001f);
-    cam->printSpeed();
+
     std::cout << "openGL version " << glGetString(GL_VERSION) << std::endl;
     std::cout << "glut version " << glutGet(GLUT_VERSION) << std::endl;
-    //ourShader->use();
-    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)Wwidth / (float)Wheight, 0.1f, 100.0f);
-    //ourShader->setMat4("projection", projection);
-    //ourShader->setMat4("view", camera.GetViewMatrix());
-    //ourModel = new Model("resources/objects/nanosuit/nanosuit.obj");
 
+    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)Wwidth / (float)Wheight, 0.1f, 100.0f);
 
     World = new world(Wwidth, Wheight, 2);
     World->update_cam(camera.GetViewMatrix());

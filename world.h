@@ -33,6 +33,10 @@ public:
 
 
 private:
+
+	void setupGUI();
+	void setupModels();
+
 	bool inited;
 	int Wwidth;
 	int Wheight;

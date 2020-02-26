@@ -1,9 +1,7 @@
 #include "world.h"
 
-//#ifndef STB_IMAGE_IMPLEMENTATION
-//#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-//#endif
+
 
 world::world(int w, int h, int image_n) {
 	Wwidth = w;
@@ -22,14 +20,17 @@ world::~world() {
 	delete sky;
 	delete hud;
 	delete ourModel;
-	delete ourShader;
+	delete modelShader;
 }
 
 void world::draw() {
 
 
+    modelShader->use();
+    ourModel->Draw(modelShader);
+
     sky->draw();
-    sky->update();
+    
 
     hud->draw(NULL);
 }
@@ -37,8 +38,12 @@ void world::draw() {
 
 //update functions
 void world::update(float deltaTime) {
-
-
+    sky->update();
+    modelShader->use();
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(-4.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
+    model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
+    modelShader->setMat4("model", model);
 }
 
 
@@ -145,25 +150,26 @@ void world::setupModels() {
     sky = new skydome();
     sky->reshape(Wwidth, Wheight);
 
+    //imported models
+    modelShader = new Shader("model_loading.vs", "model_loading.fs");
+    modelShader->use();
+    //create the nano suit model
+    ourModel = new Model("resources/objects/nanosuit/nanosuit.obj");
 }
 
 
-
-//setters
-void world::setImage(unsigned int image, int i) {
-
-
-}
 
 
 void world::update_cam(glm::mat4 i) {
     sky->setCam(i);
-   // ourShader->setMat4("view", i);
+    modelShader->use();
+    modelShader->setMat4("view",i);
 }
 
 void world::update_projectio(glm::mat4 i) {
     sky->setProjection(i);
-    //ourShader->setMat4("projection", i);
+    modelShader->use();
+    modelShader->setMat4("projection", i);
 }
 
 

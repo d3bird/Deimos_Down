@@ -47,7 +47,7 @@ private:
 
 	std::vector<unsigned int> images;
 
-	Shader* ourShader;
+	Shader* modelShader;
 	Model* ourModel;
 	gui* hud;
 	skydome* sky;

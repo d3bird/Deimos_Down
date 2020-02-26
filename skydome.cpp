@@ -77,7 +77,7 @@ void skydome::update() {
 
     //mat4 model_view = LookAt(eye, at, up);
     //glUniformMatrix4fv(ModelView, 1, GL_TRUE, model_view);
-
+    shader->use();
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model, rotation, glm::vec3(0.0, 1.0, 0.0));
     shader->setMat4("ModelView", model);

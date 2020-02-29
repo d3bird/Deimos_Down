@@ -29,6 +29,13 @@ void world::draw() {
     modelShader->use();
     ourModel->Draw(modelShader);
 
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(+4.0f, +1.75f, 0.0f)); // translate it down so it's at the center of the scene
+    model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
+    modelShader->setMat4("model", model);
+    ourModel2->Draw(modelShader);
+
     sky->draw();
     
 
@@ -156,6 +163,8 @@ void world::setupModels() {
     modelShader->use();
     //create the nano suit model
     ourModel = new Model("resources/objects/nanosuit/nanosuit.obj");
+    ourModel2 = new Model("resources/objects/man/model.dae");
+    
 }
 
 //update all of the shaders with the cameria change

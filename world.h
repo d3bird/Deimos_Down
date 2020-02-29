@@ -53,6 +53,7 @@ private:
 
 	Shader* modelShader;
 	Model* ourModel;
+	Model* ourModel2;
 	gui* hud;
 	skydome* sky;
 

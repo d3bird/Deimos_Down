@@ -12,6 +12,9 @@ uniform vec4 LightPosition;
 uniform mat4 Projection; //the screen size
 uniform mat4 view; // the cam view
 
+uniform float time;
+out float iTime;
+
 void main()
 {
   fN = vNormal.xyz;
@@ -23,5 +26,7 @@ void main()
   //  }
 
   gl_Position = Projection * view * ModelView * vPosition;
-   // gl_Position = vPosition;
+  //gl_Position = view * ModelView * vPosition;
+
+   iTime = time;
 }

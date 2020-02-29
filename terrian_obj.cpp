@@ -73,6 +73,7 @@ void terrian_obj::colorcube() {
 void terrian_obj::draw() {
 	
 	glBindVertexArray(vao);
+	//glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
 	shader->use();
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices); // the top of the table
@@ -105,5 +106,5 @@ void terrian_obj::init() {
 	glEnableVertexAttribArray(loc);
 	glVertexAttribPointer(loc, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 	shader->setVec4("objColor", glm::vec4(1.0, 1.0, 1.0, 1.0));
-
+	glBindVertexArray(0);
 }

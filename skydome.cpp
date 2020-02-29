@@ -53,6 +53,17 @@ skydome::skydome() {
 
     ModelView = glGetUniformLocation(program, "ModelView");
     Projection = glGetUniformLocation(program, "Projection");
+
+    int Wheight = 600;
+    int Wwidth = 800;
+
+    time = glGetUniformLocation(program, "time");
+    res = glGetUniformLocation(program, "iResolution");
+    shader->use();
+    glUniform2f(res, Wwidth, Wheight);
+
+    timenumber = 1;
+    reset_time();
 }
 
 void skydome::draw() {
@@ -60,6 +71,7 @@ void skydome::draw() {
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
     glDrawArrays(GL_TRIANGLES, 0, NumVertices);
+    set_last_time();
 }
 
 void skydome::update() {
@@ -81,6 +93,15 @@ void skydome::update() {
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model, rotation, glm::vec3(0.0, 1.0, 0.0));
     shader->setMat4("ModelView", model);
+   
+    
+    timenumber += 0.002 * compute_time();
+    if (timenumber == 1000000.0) {
+        timenumber = 1.0;
+    }
+
+    //printf("%f \n", timenumber);
+    glUniform1f(time, timenumber);
 }
 
 void skydome::triangle(const point4& a, const point4& b, const point4& c)
@@ -163,4 +184,19 @@ void skydome::reshape(int width, int height)
     mat4 projection = Perspective(45.0, aspect, zNear, zFar);
     //  mat4 projection = Ortho(left, right, bottom, top, zNear, zFar);
     glUniformMatrix4fv(Projection, 1, GL_TRUE, projection);
+}
+
+//sets the last time that this object was updated
+void skydome::set_last_time() {
+    last_time = glutGet(GLUT_ELAPSED_TIME);
+}
+
+// Update the last time object was modified to now.
+void skydome::reset_time() {
+    current_time = 0;
+}
+
+// Returns the amount of time since we last updated the object.
+GLint skydome::compute_time() {
+    return(glutGet(GLUT_ELAPSED_TIME) - last_time);
 }

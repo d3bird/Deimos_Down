@@ -21,9 +21,9 @@ public:
 	void updateAngle(float i[3]) { theta[0] = i[0]; theta[1] = i[1]; theta[2] = i[2]; }
 
 	//setters for the matrixes
-	void setProjectiont(glm::mat4 i) { shader->setMat4("Projection", i); }
-	void setVeiw(glm::mat4 i) { shader->setMat4("model_view", i); }
-	void setModelTrans(glm::mat4 i) { shader->setMat4("model_trans", i); }
+	void setProjectiont(glm::mat4 i) { shader->use(); shader->setMat4("Projection", i); }
+	void setVeiw(glm::mat4 i) { shader->use(); shader->setMat4("model_view", i); }
+	void setModelTrans(glm::mat4 i) { shader->use(); shader->setMat4("model_trans", i); }
 
 
 	void setRes(int width, int height) { shader->setVec2("u_resolution",glm::vec2(width, height) ); }

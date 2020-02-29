@@ -8,7 +8,7 @@
 #include "Shader.h"
 #include "model.h"
 #include "skydome.h"
-
+#include "terrian_obj.h"
 
 class world{
 public:
@@ -56,6 +56,6 @@ private:
 	Model* ourModel2;
 	gui* hud;
 	skydome* sky;
-
+	terrian_obj* terrian;
 };
 

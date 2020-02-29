@@ -25,20 +25,24 @@ world::~world() {
 
 void world::draw() {
 
+    terrian->setModelTrans(glm::mat4(1.0f));
+    terrian->draw();
 
     modelShader->use();
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(-4.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
+    model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
+    modelShader->setMat4("model", model);
     ourModel->Draw(modelShader);
 
-
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(+4.0f, +1.75f, 0.0f)); // translate it down so it's at the center of the scene
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(4.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
     model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
     modelShader->setMat4("model", model);
     ourModel2->Draw(modelShader);
 
     sky->draw();
     
-
     hud->draw(NULL);
 }
 
@@ -46,14 +50,7 @@ void world::draw() {
 //update functions
 void world::update(float deltaTime) {
     sky->update();
-    modelShader->use();
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(-4.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
-    model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
-    modelShader->setMat4("model", model);
 }
-
-
 
 void world::setupGUI() {
 
@@ -154,6 +151,9 @@ void world::setupGUI() {
 
 //creates and inits the 3d models
 void world::setupModels() {
+    terrian = new terrian_obj();
+    terrian->init();
+    terrian->setRes(Wwidth, Wheight);
     //create the skydome
     sky = new skydome();
     sky->reshape(Wwidth, Wheight);
@@ -164,12 +164,13 @@ void world::setupModels() {
     //create the nano suit model
     ourModel = new Model("resources/objects/nanosuit/nanosuit.obj");
     ourModel2 = new Model("resources/objects/man/model.dae");
-    
+  
 }
 
 //update all of the shaders with the cameria change
 void world::update_cam(glm::mat4 i) {
-    sky->setCam(i);
+   sky->setCam(i);
+    terrian->setVeiw(i);
     modelShader->use();
     modelShader->setMat4("view",i);
 }
@@ -177,6 +178,7 @@ void world::update_cam(glm::mat4 i) {
 //update the projection matrix of all the shaders
 void world::update_projectio(glm::mat4 i) {
     sky->setProjection(i);
+    terrian->setProjectiont(i);
     modelShader->use();
     modelShader->setMat4("projection", i);
 }
@@ -185,5 +187,6 @@ void world::update_projectio(glm::mat4 i) {
 void world::setScreenSize(int width, int height) {
      Wwidth = width;
      Wheight = height;
-     sky->reshape(width, height);
+     sky->reshape(Wwidth, Wheight);
+     terrian->setRes(Wwidth, Wheight);
 }

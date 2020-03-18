@@ -10,6 +10,7 @@
 #include "mesh.h"
 #include "skydome.h"
 #include "world.h"
+#include "sound_engine.h"
 
 using std::cout;
 using std::endl;
@@ -21,8 +22,8 @@ int Wwidth = 800;
 unsigned int VBO, VAO, EBO;
 
 Camera* cam;
-
 world* World;
+sound_engine* sound;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -179,6 +180,9 @@ void myinit() {
     World = new world(Wwidth, Wheight, 2);
     World->update_cam(camera.GetViewMatrix());
     World->update_projectio(projection);
+
+    sound = new sound_engine();
+
 }
 
 void mouse_scroll(int xoffset, int yoffset, int temp, int temp2) {

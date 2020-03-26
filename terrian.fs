@@ -25,16 +25,19 @@ float noise(vec2 st) {
 
 void main() 
 { 
-    vec2 st = gl_FragCoord.xy/u_resolution.xy;
-    st.x *= u_resolution.x/u_resolution.y;
-    vec3 color = vec3(0.0);
+    if(color2 == vec4(1.0, 0.0, 0.0, 1.0)){
+        gl_FragColor = color2;
+	}else{
+        vec2 st = gl_FragCoord.xy/u_resolution.xy;
+        st.x *= u_resolution.x/u_resolution.y;
+        vec3 color = vec3(0.0);
 
-    vec2 pos = vec2(st*5.0);
+        vec2 pos = vec2(st*5.0);
 
-    color = mix(vec3( noise(pos)*.5+.5), vec3(0.0, 1.0, 0.0) ,0.2 );
+        color = mix(vec3( noise(pos)*.5+.5), vec3(0.0, 1.0, 0.0) ,0.2 );
 
-    gl_FragColor = vec4(color,1.0);
-
-  //gl_FragColor = color;
+        gl_FragColor = vec4(color,1.0);
+    }
+    
 }
 

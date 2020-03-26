@@ -1,7 +1,7 @@
 #version 330
 attribute vec4 vPosition;
 //attribute vec4 vColor;
-varying vec4 color;
+varying vec4 color2;
 
 uniform mat4 Projection;
 uniform mat4 model_trans;
@@ -25,6 +25,10 @@ void main()
 	  gl_Position =Projection* model_view * model_trans * ((temp ));
 	  //gl_Position = temp;
   
-
-  color = objColor;
+  //if(vPosition.x == 135 || vPosition.y == 135 || vPosition.z == 135 ){
+  if((vPosition.x >= 0 && vPosition.x <=135) && (vPosition.z >= 0 && vPosition.z <=135 )  ){
+	color2= vec4(1.0, 0.0, 0.0, 1.0);
+  }else{
+	color2 = objColor;
+  }
 } 

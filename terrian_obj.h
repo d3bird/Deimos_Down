@@ -8,6 +8,11 @@
 typedef Angel::vec4  point4;
 typedef Angel::vec4  color4;
 
+struct tile {
+	int object;
+	glm::mat4 model;
+};
+
 class terrian_obj {
 public:
 
@@ -26,7 +31,7 @@ public:
 	void setModelTrans(glm::mat4 i) { shader->use(); shader->setMat4("model_trans", i); }
 
 
-	void setRes(int width, int height) { shader->setVec2("u_resolution",glm::vec2(width, height) ); }
+	void setRes(int width, int height) { shader->use(); shader->setVec2("u_resolution",glm::vec2(width, height) ); }
 
 private:
 
@@ -52,5 +57,11 @@ private:
 	float theta[3];
 
 	color4 outline;
+
+	//varribles for the world
+	tile*** map;
+	int floors;
+	int xwith;
+	int ywidth;
 };
 

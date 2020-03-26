@@ -24,10 +24,14 @@ world::~world() {
 }
 
 void world::draw() {
-
-    terrian->setModelTrans(glm::mat4(1.0f));
-    terrian->draw();
-
+   // glm::mat4 model;
+    //for (int i = 0; i < 5; i++) {
+      //  model = glm::mat4(1.0f);
+        //model = glm::translate(model, glm::vec3(i*.27, 0, 0));
+        //terrian->setModelTrans(model);
+        
+      //  terrian->draw();
+    //}
     modelShader->use();
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(-4.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
@@ -42,8 +46,8 @@ void world::draw() {
     ourModel2->Draw(modelShader);
 
     sky->draw();
-    
-    hud->draw(NULL);
+    //
+    //hud->draw(NULL);
 }
 
 

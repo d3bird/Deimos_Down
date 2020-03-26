@@ -160,7 +160,7 @@ void gui::init() {
     projection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f);
     Tshader->setMat4("projection", projection);
     textRenderinginit();
-    
+
     shader->use();
     shader->setInt("texture1", 0);
     shader->setInt("texture2", 1);
@@ -180,11 +180,11 @@ void gui::init() {
 void gui::textRenderinginit() {
     std::cout << "setting up text rendering" << std::endl;
 
-    if (FT_Init_FreeType(&ft)){
+    if (FT_Init_FreeType(&ft)) {
         std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
         return;
 
-}
+    }
     if (FT_New_Face(ft, "resources/fonts/times-new-roman.ttf", 0, &face)) {
         std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
         return;
@@ -223,8 +223,8 @@ void gui::textRenderinginit() {
             face->glyph->bitmap.buffer
         );
         // Set texture options
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         // Now store character for later use
@@ -242,8 +242,8 @@ void gui::textRenderinginit() {
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 
-   //generting the buffers for the text
-    
+    //generting the buffers for the text
+
     glGenVertexArrays(1, &tVAO);
     glGenBuffers(1, &tVBO);
     glBindVertexArray(tVAO);

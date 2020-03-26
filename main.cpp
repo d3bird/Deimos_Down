@@ -24,7 +24,7 @@ unsigned int VBO, VAO, EBO;
 Camera* cam;
 world* World;
 sound_engine* sound;
-
+gui* GUI;
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = Wheight / 2.0f;
@@ -38,8 +38,8 @@ float lastFrame = 0.0f;
 
 extern "C" void reshape(int width, int height) {
     glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)Wwidth / (float)Wheight, 0.1f, 100.0f);
-    World->setScreenSize(Wwidth, Wheight);
-    World->update_projectio(projection);
+   // World->setScreenSize(Wwidth, Wheight);
+   // World->update_projectio(projection);
 }
 
 //if the mouse was moved
@@ -65,8 +65,8 @@ extern "C" void motion(int xpos, int ypos){
 extern "C" void display() {
     glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    World->draw();
+    GUI->draw(NULL);
+    //World->draw();
     glutSwapBuffers();
 }
 
@@ -77,8 +77,8 @@ void idle() {
     lastFrame = currentFrame;
     //cout << deltaTime << endl;
 
-    World->update_cam(camera.GetViewMatrix());
-    World->update(deltaTime);
+   // World->update_cam(camera.GetViewMatrix());
+    //World->update(deltaTime);
     glutPostRedisplay();
 }
 
@@ -108,7 +108,7 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
         camera.ProcessKeyboard(RIGHT, deltaTime);
         break;
     case '1':
-        World->toggleHud();
+       // World->toggleHud();
         break;
     default:
         // glutSetWindowTitle(key);
@@ -125,7 +125,7 @@ extern "C" void menustatus(int status, int x, int y) {
 extern "C" void myMenu(int value) {
 	switch (value) {
 	case 0:
-        World->toggleHud();
+      //  World->toggleHud();
 		break;
 	case 1:
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -177,11 +177,13 @@ void myinit() {
 
     glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)Wwidth / (float)Wheight, 0.1f, 100.0f);
 
-    World = new world(Wwidth, Wheight, 2);
-    World->update_cam(camera.GetViewMatrix());
-    World->update_projectio(projection);
-
-    sound = new sound_engine();
+   // World = new world(Wwidth, Wheight, 2);
+   // World->update_cam(camera.GetViewMatrix());
+   // World->update_projectio(projection);
+    GUI = new gui();
+    GUI->setWindowSize(Wwidth, Wheight);
+    GUI->init();
+    //sound = new sound_engine();
 
 }
 
@@ -207,6 +209,8 @@ int main(int argc, char** argv) {
 	glutMenuStatusFunc(menustatus);
 
 	glewInit();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     myinit();
 	init();
 	glutMainLoop();

@@ -26,9 +26,8 @@ public:
 
 
 	//setters
-	void setImage(unsigned int image, int i);
 	void setScreenSize(int width, int height);
-
+	void importGUI(gui* i) { hud = i; }
 	//getters
 
 
@@ -38,7 +37,6 @@ public:
 
 private:
 
-	void setupGUI();
 	void setupModels();
 
 	bool inited;

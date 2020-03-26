@@ -68,7 +68,7 @@ private:
 	FT_Face face;
 
 	std::map<GLchar, Character> Characters;
-	glm::mat4 projection;// = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f);
+	glm::mat4 projection;
 	Shader* Tshader;
 	//grapics buffers for the text
 	GLuint tVAO, tVBO;

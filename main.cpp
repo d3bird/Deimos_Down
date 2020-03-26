@@ -38,8 +38,8 @@ float lastFrame = 0.0f;
 
 extern "C" void reshape(int width, int height) {
     glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)Wwidth / (float)Wheight, 0.1f, 100.0f);
-   // World->setScreenSize(Wwidth, Wheight);
-   // World->update_projectio(projection);
+    World->setScreenSize(Wwidth, Wheight);
+    World->update_projectio(projection);
 }
 
 //if the mouse was moved
@@ -65,8 +65,8 @@ extern "C" void motion(int xpos, int ypos){
 extern "C" void display() {
     glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    GUI->draw(NULL);
-    //World->draw();
+   // GUI->draw(NULL);
+    World->draw();
     glutSwapBuffers();
 }
 
@@ -77,8 +77,8 @@ void idle() {
     lastFrame = currentFrame;
     //cout << deltaTime << endl;
 
-   // World->update_cam(camera.GetViewMatrix());
-    //World->update(deltaTime);
+   World->update_cam(camera.GetViewMatrix());
+    World->update(deltaTime);
     glutPostRedisplay();
 }
 
@@ -108,7 +108,7 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
         camera.ProcessKeyboard(RIGHT, deltaTime);
         break;
     case '1':
-       // World->toggleHud();
+        World->toggleHud();
         break;
     default:
         // glutSetWindowTitle(key);
@@ -177,12 +177,14 @@ void myinit() {
 
     glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)Wwidth / (float)Wheight, 0.1f, 100.0f);
 
-   // World = new world(Wwidth, Wheight, 2);
-   // World->update_cam(camera.GetViewMatrix());
-   // World->update_projectio(projection);
+    World = new world(Wwidth, Wheight, 2);
+    World->update_cam(camera.GetViewMatrix());
+    World->update_projectio(projection);
     GUI = new gui();
     GUI->setWindowSize(Wwidth, Wheight);
+    World->importGUI(GUI);
     GUI->init();
+
     //sound = new sound_engine();
 
 }

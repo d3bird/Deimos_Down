@@ -2,9 +2,7 @@
 
 #include <glew.h>
 #include <freeglut.h>
-
 #include <string>
-
 
 #include "Shader.h"
 
@@ -30,6 +28,7 @@ public:
 	void setTexture1(unsigned int i) { texture1 = i; }
 	void setTexture2(unsigned int i) { texture2 = i; }
 private:
+	void setImages();
 
 	bool inited;
 	bool hide;

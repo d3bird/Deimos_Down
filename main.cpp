@@ -211,7 +211,6 @@ int main(int argc, char** argv) {
 	glutMenuStatusFunc(menustatus);
 
 	glewInit();
-    glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     myinit();
 	init();

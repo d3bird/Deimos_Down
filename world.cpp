@@ -47,7 +47,9 @@ void world::draw() {
     sky->draw();
     //
     if (hud != NULL) {
+        glEnable(GL_BLEND);
         hud->draw(NULL);
+        glDisable(GL_BLEND);
     }
 }
 

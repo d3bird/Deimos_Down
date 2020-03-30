@@ -16,7 +16,6 @@ gui::~gui() {
 }
 
 //functions
-
 void gui::draw(Shader* input_shader) {
     if (!hide) {
         if (!inited) {
@@ -49,7 +48,6 @@ void gui::draw(Shader* input_shader) {
     }
 
 }
-
 
 void gui::RenderText(Shader* s, std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
 {
@@ -107,6 +105,9 @@ void gui::init() {
          0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
         -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
         -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+
+
+
     };
     unsigned int indices[] = {
         0, 1, 3, // first triangle
@@ -185,7 +186,8 @@ void gui::textRenderinginit() {
         return;
 
     }
-    if (FT_New_Face(ft, "resources/fonts/times-new-roman.ttf", 0, &face)) {
+   // if (FT_New_Face(ft, "resources/fonts/times-new-roman.ttf", 0, &face)) {
+    if (FT_New_Face(ft, "resources/fonts/OxygenMono-Regular.otf", 0, &face)) {
         std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
         return;
     }

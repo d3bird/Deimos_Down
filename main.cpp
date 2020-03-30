@@ -182,8 +182,9 @@ void myinit() {
     World->update_projectio(projection);
     GUI = new gui();
     GUI->setWindowSize(Wwidth, Wheight);
-    World->importGUI(GUI);
     GUI->init();
+    World->importGUI(GUI);
+    
 
     //sound = new sound_engine();
 
@@ -209,7 +210,7 @@ int main(int argc, char** argv) {
     glutMouseWheelFunc(mouse_scroll);
 	setupMenu();
 	glutMenuStatusFunc(menustatus);
-
+    //glutFullScreen();
 	glewInit();
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     myinit();

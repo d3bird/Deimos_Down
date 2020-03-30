@@ -12,14 +12,9 @@
 
 #include "Shader.h"
 
-struct Character {
-	GLuint     TextureID;  // ID handle of the glyph texture
-	glm::ivec2 Size;       // Size of glyph
-	glm::ivec2 Bearing;    // Offset from baseline to left/top of glyph
-	GLuint     Advance;    // Offset to advance to next glyph
-};
 
-class gui{
+
+class gui {
 public:
 	//constructors
 	gui();
@@ -63,6 +58,13 @@ private:
 	Shader* shader;
 
 	//stuff for text rendering
+	struct Character {
+		GLuint     TextureID;  // ID handle of the glyph texture
+		glm::ivec2 Size;       // Size of glyph
+		glm::ivec2 Bearing;    // Offset from baseline to left/top of glyph
+		GLuint     Advance;    // Offset to advance to next glyph
+	};
+
 	bool textworking;
 	FT_Library ft;
 	FT_Face face;

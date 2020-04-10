@@ -213,8 +213,10 @@ int main(int argc, char** argv) {
     //glutFullScreen();
 	glewInit();
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  
     myinit();
 	init();
+    glDisable(GL_BLEND);
 	glutMainLoop();
 	return(EXIT_SUCCESS);
 }

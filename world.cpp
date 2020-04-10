@@ -12,6 +12,15 @@ world::world(int w, int h, int image_n) {
 	image_lastused = 0;
     inited = false;
     hud = NULL;
+     modelShader = NULL;
+     ourModel = NULL;
+     ourModel2 = NULL;
+     hud = NULL;
+     sky = NULL;
+     terrian = NULL;
+
+    debug = 4;//change this bit to debug different sections
+
     setupModels();
 }
 
@@ -23,81 +32,167 @@ world::~world() {
 }
 
 void world::draw() {
-   // glm::mat4 model;
-    //for (int i = 0; i < 5; i++) {
-      //  model = glm::mat4(1.0f);
-        //model = glm::translate(model, glm::vec3(i*.27, 0, 0));
-        //terrian->setModelTrans(model);
-        
-      //  terrian->draw();
-    //}
-    modelShader->use();
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(-4.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
-    model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
-    modelShader->setMat4("model", model);
-    ourModel->Draw(modelShader);
+    glm::mat4 model;
+    if (debug == 1) {
 
-    model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(4.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-    model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
-    modelShader->setMat4("model", model);
-    ourModel2->Draw(modelShader);
+        modelShader->use();
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-4.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
+        model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
+        modelShader->setMat4("model", model);
+        ourModel->Draw(modelShader);
 
-    sky->draw();
-    //
-    if (hud != NULL) {
-        glEnable(GL_BLEND);
-        hud->draw(NULL);
-        glDisable(GL_BLEND);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(4.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
+        modelShader->setMat4("model", model);
+        ourModel2->Draw(modelShader);
+    }
+    else if (debug == 2) {
+        sky->draw();
+    }
+    else if (debug == 3) {
+        if (hud != NULL) {
+            glEnable(GL_BLEND);
+            hud->draw(NULL);
+            glDisable(GL_BLEND);
+        }
+    }
+    else if (debug == 4) {
+
+        for (int i = 0; i < 5; i++) {
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(i * .27, 0, 0));
+            terrian->setModelTrans(model);
+
+            terrian->draw();
+        }
+
+        terrian->draw();
+    }
+    else {
+        modelShader->use();
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-4.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
+        model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
+        modelShader->setMat4("model", model);
+        ourModel->Draw(modelShader);
+
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(4.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
+        modelShader->setMat4("model", model);
+        ourModel2->Draw(modelShader);
+        sky->draw();
+
+        if (hud != NULL) {
+            glEnable(GL_BLEND);
+            hud->draw(NULL);
+            glDisable(GL_BLEND);
+        }
     }
 }
 
 
 //update functions
 void world::update(float deltaTime) {
-    sky->update();
+    if (debug == 0 || debug == 2) {
+        sky->update();
+    }
 }
 
 
 //creates and inits the 3d models
 void world::setupModels() {
-    terrian = new terrian_obj();
-    terrian->init();
-    terrian->setRes(Wwidth, Wheight);
-    //create the skydome
-    sky = new skydome();
-    sky->reshape(Wwidth, Wheight);
+    if (debug == 0) {
+        terrian = new terrian_obj();
+        terrian->init();
+        terrian->setRes(Wwidth, Wheight);
+        //create the skydome
+        sky = new skydome();
+        sky->reshape(Wwidth, Wheight);
 
-    //create the differnt shades for the models
-    modelShader = new Shader("model_loading.vs", "model_loading.fs");
-    modelShader->use();
-    //create the nano suit model
-    ourModel = new Model("resources/objects/nanosuit/nanosuit.obj");
-    ourModel2 = new Model("resources/objects/man/model.dae");
-  
+        //create the differnt shades for the models
+        modelShader = new Shader("model_loading.vs", "model_loading.fs");
+        modelShader->use();
+        //create the nano suit model
+        ourModel = new Model("resources/objects/nanosuit/nanosuit.obj");
+        ourModel2 = new Model("resources/objects/man/model.dae");
+    }
+    else if (debug == 1) {
+        //create the differnt shades for the models
+        modelShader = new Shader("model_loading.vs", "model_loading.fs");
+        modelShader->use();
+        //create the nano suit model
+        ourModel = new Model("resources/objects/nanosuit/nanosuit.obj");
+        ourModel2 = new Model("resources/objects/man/model.dae");
+    }else if (debug == 2) {
+        sky = new skydome();
+        sky->reshape(Wwidth, Wheight);
+    }
+    else if (debug == 4) {
+        terrian = new terrian_obj();
+        terrian->init();
+        terrian->setRes(Wwidth, Wheight);
+    }
 }
 
 //update all of the shaders with the cameria change
 void world::update_cam(glm::mat4 i) {
-   sky->setCam(i);
-    terrian->setVeiw(i);
-    modelShader->use();
-    modelShader->setMat4("view",i);
+    if (debug == 0) {
+        sky->setCam(i);
+        terrian->setVeiw(i);
+        modelShader->use();
+        modelShader->setMat4("view", i);
+    }
+    else if (debug == 1) {
+        modelShader->use();
+        modelShader->setMat4("view", i);
+    }
+    else if (debug == 2) {
+        sky->setCam(i);
+    }
+    else if (debug == 4) {
+        terrian->setVeiw(i);
+    }
 }
 
 //update the projection matrix of all the shaders
 void world::update_projectio(glm::mat4 i) {
-    sky->setProjection(i);
-    terrian->setProjectiont(i);
-    modelShader->use();
-    modelShader->setMat4("projection", i);
+    if (debug == 0) {
+        sky->setProjection(i);
+        terrian->setProjectiont(i);
+        modelShader->use();
+        modelShader->setMat4("projection", i);
+    }
+    else if (debug == 1) {
+        modelShader->use();
+        modelShader->setMat4("projection", i);
+    }
+    else if (debug == 2) {
+        sky->setProjection(i);
+    }
+    else if (debug == 4) {
+        terrian->setProjectiont(i);
+    }
 }
 
 //update thescreen size varibles for all the objects that depend on them
 void world::setScreenSize(int width, int height) {
      Wwidth = width;
      Wheight = height;
-     sky->reshape(Wwidth, Wheight);
-     terrian->setRes(Wwidth, Wheight);
+     if (debug == 0) {
+         sky->reshape(Wwidth, Wheight);
+         terrian->setRes(Wwidth, Wheight);
+     }
+     else if (debug == 2) {
+         sky->reshape(Wwidth, Wheight);
+     }
+     else if (debug == 4) {
+         terrian->setRes(Wwidth, Wheight);
+     }
 }
+
+

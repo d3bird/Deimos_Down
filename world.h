@@ -38,6 +38,11 @@ public:
 private:
 
 	void setupModels();
+	int debug;// 0 for normal
+				// 1 for objects
+				// 2 for sky
+				//3 for gui
+				//4 for terrian
 
 	bool inited;
 	int Wwidth;

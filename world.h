@@ -9,6 +9,7 @@
 #include "model.h"
 #include "skydome.h"
 #include "terrian_obj.h"
+#include "terrian.h"
 
 class world{
 public:
@@ -60,5 +61,6 @@ private:
 	gui* hud;
 	skydome* sky;
 	terrian_obj* terrian;
+	terrian1* map;
 };
 

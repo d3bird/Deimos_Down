@@ -61,15 +61,15 @@ void world::draw() {
     }
     else if (debug == 4) {
 
-        for (int i = 0; i < 5; i++) {
+       /* for (int i = 0; i < 5; i++) {
             model = glm::mat4(1.0f);
             model = glm::translate(model, glm::vec3(i * .27, 0, 0));
             terrian->setModelTrans(model);
 
             terrian->draw();
-        }
+        }*/
 
-        terrian->draw();
+        map->draw();
     }
     else {
         modelShader->use();
@@ -136,6 +136,8 @@ void world::setupModels() {
         terrian = new terrian_obj();
         terrian->init();
         terrian->setRes(Wwidth, Wheight);
+        map = new terrian1();
+        map->setRes(Wwidth, Wheight);
     }
 }
 
@@ -156,6 +158,7 @@ void world::update_cam(glm::mat4 i) {
     }
     else if (debug == 4) {
         terrian->setVeiw(i);
+        map->setVeiw(i);
     }
 }
 
@@ -176,6 +179,7 @@ void world::update_projectio(glm::mat4 i) {
     }
     else if (debug == 4) {
         terrian->setProjectiont(i);
+        map->setProjectiont(i);
     }
 }
 
@@ -192,6 +196,7 @@ void world::setScreenSize(int width, int height) {
      }
      else if (debug == 4) {
          terrian->setRes(Wwidth, Wheight);
+         map->setRes(Wwidth, Wheight);
      }
 }
 

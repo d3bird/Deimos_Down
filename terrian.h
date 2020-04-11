@@ -37,9 +37,13 @@ private:
 	GLuint buffers[2];
 	GLuint Modelview, Projection, ModelTrans;
 
+	//the first 36 are reservered to highlight the square
 	const static int NumVertices = 36;
+	const static int NumVertices_map = 36;
 	point4  vertices[8];
-	point4 points[NumVertices];
+	point4 points[NumVertices + NumVertices_map];
 
+	point4* total_points;
+	 
 };
 

@@ -85,7 +85,7 @@ void terrian1::createPoints() {
 	int xoffset_total = ((xoffset * distance_value));
 	int zoffset_total = (zoffset * distance_value);
 	
-
+	//generates a 16x16 grid
 	for (int i = 0; i < num_of_squares; i++) {
 
 		int value1, value2;
@@ -116,6 +116,29 @@ void terrian1::createPoints() {
 		//std::cout << "created one square, "<< xoffset_total << std::endl;
 	}
 
+	raise_square(0, 0, 135);
+	raise_square(1, 1, 135);
+}
+
+void terrian1::raise_square(int x,int  z, int amount) {
+	if (x < 0 || z < 0) {
+		std::cout << "can not have negative values to raise squares" << std::endl;
+		return;
+	}
+	int offset = (x * 6) + (z * (6 * grid_width));//generates the offset for the square
+	int index = NumVertices+ offset;//calculates the start point from the cube start point
+	points[index].y = points[index].y +amount;
+	index++;
+	points[index].y = points[index].y + amount;
+	index++;
+	points[index].y = points[index].y + amount;
+	index++;
+	points[index].y = points[index].y + amount;
+	index++;
+	points[index].y = points[index].y + amount;
+	index++;
+	points[index].y = points[index].y + amount;
+	index++;
 }
 
 

@@ -84,8 +84,8 @@ void terrian1::createPoints() {
 	
 	int xoffset_total = ((xoffset * distance_value));
 	int zoffset_total = (zoffset * distance_value);
-	//int num_of_squares = 1;
-	int start = 0;
+	
+
 	for (int i = 0; i < num_of_squares; i++) {
 
 		int value1, value2;
@@ -108,12 +108,9 @@ void terrian1::createPoints() {
 		points[index] = points[value2];
 		index++;
 
-		//inits the offest values
-		if (start == 0) {
-			start = 1;
-			zoffset++;
-		}
-		else {
+		xoffset ++;
+		if (xoffset == 16) {
+			xoffset = 0;
 			zoffset++;
 		}
 		//std::cout << "created one square, "<< xoffset_total << std::endl;

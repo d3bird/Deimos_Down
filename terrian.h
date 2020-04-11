@@ -39,7 +39,7 @@ private:
 
 	//the first 36 are reservered to highlight the square
 	const static int NumVertices = 36;
-	const static int NumVertices_map = 36;
+	const static int NumVertices_map = 1536;
 	int num_of_squares = NumVertices_map / 6;
 	point4  vertices[8];
 	point4 points[NumVertices + NumVertices_map];

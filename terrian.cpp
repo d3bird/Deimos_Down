@@ -32,7 +32,7 @@ void terrian1::draw() {
 	model = glm::translate(model, glm::vec3(0.27, 0, 0));
 	shader->setMat4("model_trans", model);
 	//glDrawArrays(GL_TRIANGLES, 0, NumVertices);
-	glDrawArrays(GL_TRIANGLES, NumVertices, 6);
+	glDrawArrays(GL_TRIANGLES, NumVertices, NumVertices_map);
 }
 
 void terrian1::setupBuffer() {
@@ -79,27 +79,44 @@ void terrian1::createPoints() {
 	int distance_value = 200;
 	int start_height = -400;
 
-	int offset_amount = 1;
+	int xoffset = 0;
+	int zoffset = 0;
 	
-	int num_of_squares = 1;
+	int xoffset_total = ((xoffset * distance_value));
+	int zoffset_total = (zoffset * distance_value);
+	//int num_of_squares = 1;
+	int start = 0;
 	for (int i = 0; i < num_of_squares; i++) {
+
 		int value1, value2;
-		points[index] = point4(0, start_height, 0, 1.0);
+		xoffset_total = ((xoffset * distance_value));
+		zoffset_total = (zoffset * distance_value);
+
+		points[index] = point4(0 + xoffset_total, start_height, (0 + zoffset_total), 1.0);
 		index++;
-		points[index] = point4(0, start_height, distance_value, 1.0);
+		points[index] = point4(0 + xoffset_total, start_height, (distance_value + zoffset_total), 1.0);
 		value2 = index;
 		index++;
-		points[index] = point4(distance_value, start_height, 0, 1.0);
+		points[index] = point4((distance_value + xoffset_total), start_height, (0 + zoffset_total), 1.0);
 		value1 = index;
 		index++;
 
 		points[index] = points[value1];
 		index++;
-		points[index] = point4(distance_value, start_height, distance_value, 1.0);
+		points[index] = point4((distance_value + xoffset_total), start_height, (distance_value + zoffset_total), 1.0);
 		index++;
 		points[index] = points[value2];
 		index++;
 
+		//inits the offest values
+		if (start == 0) {
+			start = 1;
+			zoffset++;
+		}
+		else {
+			zoffset++;
+		}
+		//std::cout << "created one square, "<< xoffset_total << std::endl;
 	}
 
 }

@@ -26,13 +26,21 @@ public:
 
 
 private:
+
+	int points_generated;
+
 	void createPoints();
 	void raise_square(int x, int  z, int amount);
+
+	void createPoints_strip();
+
 	void setupBuffer();
 	void colorcube();
 	void MyQuad(int a, int b, int c, int d);
 
 	GLuint get_points_size() { return sizeof(points); }
+
+
 
 	Shader* shader;
 	GLuint vao;
@@ -45,7 +53,7 @@ private:
 	int num_of_squares = NumVertices_map / 6;
 	int grid_width = 16;
 	int grid_height =16;
-
+	
 	point4  vertices[8];
 	point4 points[NumVertices + NumVertices_map];
 

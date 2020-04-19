@@ -5,7 +5,7 @@ terrian1::terrian1() {
 	int width = 135;
 	int length = 135;
 	int height = 135;
-
+	points_generated = 0;
 	// cube dimentions
 	vertices[0] = point4(-width, -(height), length, 1.0);
 	vertices[1] = point4(-width, (height), length, 1.0);
@@ -17,7 +17,9 @@ terrian1::terrian1() {
 	vertices[6] = point4(width, (height), -length, 1.0);
 	vertices[7] = point4(width, -(height), -length, 1.0);
 	
-	createPoints();//ceate the points on the map
+	//createPoints();//ceate the points on the map
+	createPoints_strip();
+	colorcube();//create the cube points
 	setupBuffer();//create the buffer
 }
 
@@ -31,13 +33,15 @@ void terrian1::draw() {
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(0.27, 0, 0));
 	shader->setMat4("model_trans", model);
+	//draw by indiviual triangles
 	//glDrawArrays(GL_TRIANGLES, 0, NumVertices);
-	glDrawArrays(GL_TRIANGLES, NumVertices, NumVertices_map);
+	//glDrawArrays(GL_TRIANGLES, NumVertices, NumVertices_map);
+
+	//draw triangle strip in
+	glDrawArrays(GL_TRIANGLE_STRIP, NumVertices, points_generated);
 }
 
 void terrian1::setupBuffer() {
-	colorcube();//create the cube points
-
 
 	total_points = new point4[NumVertices + NumVertices_map] ;
 	for (int i = 0; i < NumVertices; i++) {
@@ -66,6 +70,50 @@ void terrian1::setupBuffer() {
 
 }
 
+//creates points for use of a sinlge triangle strip
+void terrian1::createPoints_strip() {
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	int index = NumVertices;// starting index after  the cube
+
+	int width = 135;
+	int length = 135;
+	int height = 135;
+
+	int distance_value = 200;
+	int start_height = -400;
+
+	points_generated = 4;
+
+
+	//generates the inital square
+	points[index] = point4(0, start_height, 0, 1.0);
+	index++;
+	points[index] = point4(0, start_height, distance_value, 1.0);
+	index++;
+	points[index] = point4(distance_value, start_height, 0, 1.0);
+	index++;
+	points[index] = point4(distance_value, start_height, distance_value, 1.0);
+	index++;
+
+	int xoffset = 2;
+	int zoffset = 2;
+
+	for (int i = 0; i < grid_width-1; i++) {
+		points[index] = point4(distance_value * xoffset, start_height, 0, 1.0);
+		index++;
+		points[index] = point4(distance_value * xoffset, start_height, distance_value, 1.0);
+		index++;
+		points_generated += 2;
+		xoffset++;
+	}
+
+	std::cout << points_generated << std::endl;
+	std::cout << "points generated " << points_generated << std::endl;
+}
+
+
+//creates points for rendering through glDrawArrays
 void terrian1::createPoints() {
 	//lines for debugging
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -117,18 +165,21 @@ void terrian1::createPoints() {
 	}
 
 	raise_square(0, 0, 135);
-	raise_square(1, 1, 135);
+	raise_square(0, 15, 135);
+	//raise_square(15, 0, 135);
+	//raise_square(15, 15, 135);
 }
 
-void terrian1::raise_square(int x,int  z, int amount) {
-	if (x < 0 || z < 0) {
-		std::cout << "can not have negative values to raise squares" << std::endl;
+//for use with the draw by array
+void terrian1::raise_square(int x, int  z, int amount) {
+	int g_w = grid_width - 1;
+	int g_h = grid_height - 1;
+	if (x < 0 || x >grid_width || z < 0 ||z >grid_height) {
+		std::cout << "wong parms to raise squares" << std::endl;
 		return;
 	}
 	int offset = (x * 6) + (z * (6 * grid_width));//generates the offset for the square
-	int index = NumVertices+ offset;//calculates the start point from the cube start point
-	points[index].y = points[index].y +amount;
-	index++;
+	int index = NumVertices + offset;//calculates the start point from the cube start point
 	points[index].y = points[index].y + amount;
 	index++;
 	points[index].y = points[index].y + amount;
@@ -139,7 +190,74 @@ void terrian1::raise_square(int x,int  z, int amount) {
 	index++;
 	points[index].y = points[index].y + amount;
 	index++;
+	points[index].y = points[index].y + amount;
+	index++;
+
+	index = NumVertices + offset;
+
+	//adjust the surounding squares
+	//the square to the left
+	if (x != 0) {
+		int new_offset = ((x - 1) * 6) + (z * (6 * grid_width));
+		int index2 = NumVertices + new_offset;
+		points[index2 + 2].y = points[index + 2].y;
+		points[index2 + 3].y = points[index + 3].y;
+		points[index2 + 4].y = points[index + 4].y;
+	}
+	//the square to the right
+	if (x != g_w) {
+		int new_offset = ((x + 1) * 6) + (z * (6 * grid_width));
+		int index2 = NumVertices + new_offset;
+		points[index2].y = points[index + 2].y;
+		points[index2 + 1].y = points[index + 3].y;
+		points[index2 + 5].y = points[index + 4].y;
+	}
+	//the square bellow
+	if (z != 0) {
+		int new_offset = ((x) * 6) + ((z + 1) * (6 * grid_width));
+		int index2 = NumVertices + new_offset;
+		points[index2].y = points[index].y;
+		points[index2 + 2].y = points[index + 2].y;
+		points[index2 + 3].y = points[index + 3].y;
+	}
+	//the bottom right squre change
+	if (z != 0 && x != 0){
+		int new_offset = ((x) * 6) + ((z + 1) * (6 * grid_width));
+		int index2 = NumVertices + new_offset;
+		points[index2 + 6].y = points[index + 6].y;
+	}
+	//the bottom left squre change
+	if (z != 0 && x != 0) {
+		int new_offset = ((x-1) * 6) + ((z + 1) * (6 * grid_width));
+		int index2 = NumVertices + new_offset;
+		points[index2 + 2].y = points[index + 2].y;
+		points[index2 + 3 ].y = points[index +3].y;
+	}
+
+	//the square above
+	if (z != 0) {
+		int new_offset = ((x) * 6) + ((z - 1) * (6 * grid_width));
+		int index2 = NumVertices + new_offset;
+		points[index2+1].y = points[index].y;
+		points[index2 + 4].y = points[index + 2].y;
+		points[index2 + 5].y = points[index + 3].y;
+	}
+	//the up right squre change
+	if (z != 0 && x != 0) {
+		int new_offset = ((x+1) * 6) + ((z - 1) * (6 * grid_width));
+		int index2 = NumVertices + new_offset;
+		points[index2 + 1].y = points[index + 1].y;
+		points[index2 + 5].y = points[index + 5].y;
+	}
+	//the up left squre change
+	if (z != 0 && x != 0) {
+		int new_offset = ((x - 1) * 6) + ((z - 1) * (6 * grid_width));
+		int index2 = NumVertices + new_offset;
+		points[index2 +4].y = points[index+4].y;
+	}
 }
+
+
 
 
 //creates the points for the highlighting cube

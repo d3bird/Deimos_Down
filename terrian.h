@@ -51,7 +51,7 @@ private:
 	const static int NumVertices = 36;
 	const static int NumVertices_map = 1536;
 	int num_of_squares = NumVertices_map / 6;
-	int grid_width = 16;
+	int grid_width = 3;
 	int grid_height =16;
 	
 	point4  vertices[8];

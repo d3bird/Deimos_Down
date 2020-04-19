@@ -85,7 +85,6 @@ void terrian1::createPoints_strip() {
 
 	points_generated = 4;
 
-
 	//generates the inital square
 	points[index] = point4(0, start_height, 0, 1.0);
 	index++;
@@ -96,17 +95,46 @@ void terrian1::createPoints_strip() {
 	points[index] = point4(distance_value, start_height, distance_value, 1.0);
 	index++;
 
-	int xoffset = 2;
+	int xoffset = 1;
 	int zoffset = 2;
 
-	for (int i = 0; i < grid_width-1; i++) {
-		points[index] = point4(distance_value * xoffset, start_height, 0, 1.0);
-		index++;
-		points[index] = point4(distance_value * xoffset, start_height, distance_value, 1.0);
-		index++;
-		points_generated += 2;
-		xoffset++;
-	}
+	bool going_right = true;//if the points are being generated to the right/left
+
+	//for (int x = 0; x < grid_height - 1; x++) {
+		for (int i = 0; i < grid_width; i++) {
+			if (going_right) {
+				points[index] = point4(distance_value * xoffset, start_height, 0, 1.0);
+				index++;
+				points[index] = point4(distance_value * xoffset, start_height, distance_value, 1.0);
+				index++;
+				points_generated += 2;
+				xoffset++;
+			}
+			else {
+
+
+			}
+		}
+		//switch to going the other direction
+		if (going_right) {
+			//temp
+			points[index] = points[index - 3];
+			index++;
+			xoffset--;
+			points[index] = point4(distance_value * xoffset, start_height, 0 + (distance_value*2), 1.0);
+			index++;
+			points[index] = point4(distance_value * (xoffset-1), start_height, distance_value + (distance_value * 1), 1.0);
+			index++;
+			points_generated += 3;
+			
+
+		}
+		else {
+
+
+		}
+		going_right = !going_right;//swap
+	//}
 
 	std::cout << points_generated << std::endl;
 	std::cout << "points generated " << points_generated << std::endl;

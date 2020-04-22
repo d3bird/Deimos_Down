@@ -30,9 +30,6 @@ private:
 	int points_generated;
 
 	void createPoints();
-	void raise_square(int x, int  z, int amount);
-
-	void createPoints_strip();
 
 	void setupBuffer();
 	void colorcube();
@@ -51,7 +48,7 @@ private:
 	const static int NumVertices = 36;
 	const static int NumVertices_map = 1536;
 	int num_of_squares = NumVertices_map / 6;
-	int grid_width = 3;
+	int grid_width = 16;
 	int grid_height =16;
 	
 	point4  vertices[8];

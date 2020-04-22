@@ -18,7 +18,7 @@ terrian1::terrian1() {
 	vertices[7] = point4(width, -(height), -length, 1.0);
 	
 	//createPoints();//ceate the points on the map
-	createPoints_strip();
+	createPoints();
 	colorcube();//create the cube points
 	setupBuffer();//create the buffer
 }
@@ -70,8 +70,8 @@ void terrian1::setupBuffer() {
 
 }
 
-//creates points for use of a sinlge triangle strip
-void terrian1::createPoints_strip() {
+//creates points for use of a sinlge triangle strip for the terrian
+void terrian1::createPoints() {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	int index = NumVertices;// starting index after  the cube
@@ -83,9 +83,19 @@ void terrian1::createPoints_strip() {
 	int distance_value = 200;
 	int start_height = -400;
 
-	points_generated = 4;
+	int xoffset = 0;
+	int zoffset = 0;
 
-	//generates the inital square
+	bool go_right = true;
+
+	bool going_left = false;
+	bool going_right = false;
+	bool first_turn = true;
+	//equations to calc the offsets value
+	int xoffset_amount = xoffset * distance_value;
+	int zoffset_amount = zoffset * distance_value;
+
+	//create the base square
 	points[index] = point4(0, start_height, 0, 1.0);
 	index++;
 	points[index] = point4(0, start_height, distance_value, 1.0);
@@ -94,212 +104,95 @@ void terrian1::createPoints_strip() {
 	index++;
 	points[index] = point4(distance_value, start_height, distance_value, 1.0);
 	index++;
+	points_generated += 4;
+	xoffset++;
 
-	int xoffset = 1;
-	int zoffset = 0;
+	for (int y = 0; y < grid_height; y++) {
+		for (int i = 0; i < grid_width-1; i++) {
 
-	bool going_right = true;//if the points are being generated to the right/left
-
-	for (int x = 0; x < 2; x++) {
-		for (int i = 0; i < grid_width; i++) {
-			if (going_right) {
-				points[index] = point4(distance_value * xoffset, start_height, 0 + (distance_value * zoffset), 1.0);
+			//small corrections need to make it form in a grid
+			if (going_left) {
+				i++;
+				going_left = false;
+			}
+			else if (going_right) {
+				i--;
+				going_right = false;
+			}
+		
+			if (go_right) {
+				xoffset_amount = xoffset * distance_value;
+				zoffset_amount = zoffset * distance_value;
+				points[index] = point4(distance_value + xoffset_amount, start_height, 0 + zoffset_amount, 1.0);
 				index++;
-				if (zoffset == 0) {//fix edge case where this could fail
-					zoffset = 1;
-					points[index] = point4(distance_value * xoffset, start_height, distance_value + (distance_value * (zoffset - 1)), 1.0);
-					zoffset = 0;
-				}
-				else {
-					points[index] = point4(distance_value * xoffset, start_height, distance_value + (distance_value * (zoffset - 1)), 1.0);
-				}
-
+				points[index] = point4(distance_value + xoffset_amount, start_height, distance_value + zoffset_amount, 1.0);
 				index++;
 				points_generated += 2;
 				xoffset++;
-			}else {
+			}
+			else {
+				xoffset -= 1;
+				xoffset_amount = xoffset * distance_value;
+				zoffset_amount = zoffset * distance_value;
 
-				if (i != grid_width - 1) {//skip the last one since one was already generated when we swaped directions
-					std::cout << "genertaing points the other direction" << std::endl;
-					xoffset--;
-					points[index] = point4(distance_value * (xoffset - 1), start_height, distance_value + (distance_value * (zoffset - 1)), 1.0);
-					index++;
-					points[index] = point4(distance_value * (xoffset - 1), start_height, distance_value + (distance_value * (zoffset - 2)), 1.0);
-					index++;
-					points_generated += 2;
-				}
+				points[index] = point4(0 + xoffset_amount, start_height, 0 + zoffset_amount, 1.0);
+				index++;
+				points[index] = point4(0 + xoffset_amount, start_height, distance_value + zoffset_amount, 1.0);
+				index++;
+
+				points_generated += 2;
 			}
 		}
-		//switch to going the other direction
-		if (going_right) {
-			//temp
-			
-			zoffset += 2;
-			points[index] = points[index - 3];
-			point4 temp_p = points[index - 3];
-			index++;
-			xoffset--;
-			points[index] = point4(distance_value * xoffset, start_height, 0 + (distance_value* zoffset), 1.0);
-			index++;
-			points[index] = point4(distance_value * (xoffset-1), start_height, distance_value + (distance_value * (zoffset-1)), 1.0);
-			index++;
-			points[index] = temp_p;
-			index++;
-			points_generated += 4;
+		//check to makesure that it does not generate the start of the next row
+		if (y != grid_height - 1) {
+			if (go_right) {
+				go_right = !go_right;
+				going_left = true;
+				//swapping to go the other way
+				zoffset++;
+				point4 temp = points[index - 3];
+				zoffset_amount = zoffset * distance_value;
+				points[index] = temp;
+				index++;
+				points[index] = point4(distance_value + xoffset_amount, start_height, distance_value + zoffset_amount, 1.0);
+				index++;
+				points[index] = temp;
+				index++;
+				points[index] = point4(0 + xoffset_amount, start_height, distance_value + zoffset_amount, 1.0);
+				index++;
+
+				points_generated += 4;
+
+				//going to the right one cube
+				xoffset -= 2;
+				xoffset_amount = xoffset * distance_value;
+				zoffset_amount = zoffset * distance_value;
+
+				points[index] = point4(0 + xoffset_amount, start_height, 0 + zoffset_amount, 1.0);
+				index++;
+				points[index] = point4(0 + xoffset_amount, start_height, distance_value + zoffset_amount, 1.0);
+				index++;
+				points_generated += 2;
+			}
+			else {
+				go_right = !go_right;
+				going_right = true;
+				zoffset++;
+				zoffset_amount = zoffset * distance_value;
+
+				point4 temp = points[index - 3];
+				points[index] = temp;
+				index++;
+				points[index] = point4(0 + xoffset_amount, start_height, distance_value + zoffset_amount, 1.0);
+				index++;
+				points[index] = point4(distance_value + xoffset_amount, start_height, distance_value + zoffset_amount, 1.0);
+				index++;
+				points[index] = temp;
+				index++;
+				points_generated += 4;
+
+			}
 		}
-		else {
-
-
-		}
-		going_right = !going_right;//swap
-	}
-
-	std::cout << points_generated << std::endl;
-	std::cout << "points generated " << points_generated << std::endl;
-}
-
-
-//creates points for rendering through glDrawArrays
-void terrian1::createPoints() {
-	//lines for debugging
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	int index = NumVertices;// starting index after  the cube
-	
-	int width = 135;
-	int length = 135;
-	int height = 135;
-	
-	int distance_value = 200;
-	int start_height = -400;
-
-	int xoffset = 0;
-	int zoffset = 0;
-	
-	int xoffset_total = ((xoffset * distance_value));
-	int zoffset_total = (zoffset * distance_value);
-	
-	//generates a 16x16 grid
-	for (int i = 0; i < num_of_squares; i++) {
-
-		int value1, value2;
-		xoffset_total = ((xoffset * distance_value));
-		zoffset_total = (zoffset * distance_value);
-
-		points[index] = point4(0 + xoffset_total, start_height, (0 + zoffset_total), 1.0);
-		index++;
-		points[index] = point4(0 + xoffset_total, start_height, (distance_value + zoffset_total), 1.0);
-		value2 = index;
-		index++;
-		points[index] = point4((distance_value + xoffset_total), start_height, (0 + zoffset_total), 1.0);
-		value1 = index;
-		index++;
-
-		points[index] = points[value1];
-		index++;
-		points[index] = point4((distance_value + xoffset_total), start_height, (distance_value + zoffset_total), 1.0);
-		index++;
-		points[index] = points[value2];
-		index++;
-
-		xoffset ++;
-		if (xoffset == 16) {
-			xoffset = 0;
-			zoffset++;
-		}
-		//std::cout << "created one square, "<< xoffset_total << std::endl;
-	}
-
-	raise_square(0, 0, 135);
-	raise_square(0, 15, 135);
-	//raise_square(15, 0, 135);
-	//raise_square(15, 15, 135);
-}
-
-//for use with the draw by array
-void terrian1::raise_square(int x, int  z, int amount) {
-	int g_w = grid_width - 1;
-	int g_h = grid_height - 1;
-	if (x < 0 || x >grid_width || z < 0 ||z >grid_height) {
-		std::cout << "wong parms to raise squares" << std::endl;
-		return;
-	}
-	int offset = (x * 6) + (z * (6 * grid_width));//generates the offset for the square
-	int index = NumVertices + offset;//calculates the start point from the cube start point
-	points[index].y = points[index].y + amount;
-	index++;
-	points[index].y = points[index].y + amount;
-	index++;
-	points[index].y = points[index].y + amount;
-	index++;
-	points[index].y = points[index].y + amount;
-	index++;
-	points[index].y = points[index].y + amount;
-	index++;
-	points[index].y = points[index].y + amount;
-	index++;
-
-	index = NumVertices + offset;
-
-	//adjust the surounding squares
-	//the square to the left
-	if (x != 0) {
-		int new_offset = ((x - 1) * 6) + (z * (6 * grid_width));
-		int index2 = NumVertices + new_offset;
-		points[index2 + 2].y = points[index + 2].y;
-		points[index2 + 3].y = points[index + 3].y;
-		points[index2 + 4].y = points[index + 4].y;
-	}
-	//the square to the right
-	if (x != g_w) {
-		int new_offset = ((x + 1) * 6) + (z * (6 * grid_width));
-		int index2 = NumVertices + new_offset;
-		points[index2].y = points[index + 2].y;
-		points[index2 + 1].y = points[index + 3].y;
-		points[index2 + 5].y = points[index + 4].y;
-	}
-	//the square bellow
-	if (z != 0) {
-		int new_offset = ((x) * 6) + ((z + 1) * (6 * grid_width));
-		int index2 = NumVertices + new_offset;
-		points[index2].y = points[index].y;
-		points[index2 + 2].y = points[index + 2].y;
-		points[index2 + 3].y = points[index + 3].y;
-	}
-	//the bottom right squre change
-	if (z != 0 && x != 0){
-		int new_offset = ((x) * 6) + ((z + 1) * (6 * grid_width));
-		int index2 = NumVertices + new_offset;
-		points[index2 + 6].y = points[index + 6].y;
-	}
-	//the bottom left squre change
-	if (z != 0 && x != 0) {
-		int new_offset = ((x-1) * 6) + ((z + 1) * (6 * grid_width));
-		int index2 = NumVertices + new_offset;
-		points[index2 + 2].y = points[index + 2].y;
-		points[index2 + 3 ].y = points[index +3].y;
-	}
-
-	//the square above
-	if (z != 0) {
-		int new_offset = ((x) * 6) + ((z - 1) * (6 * grid_width));
-		int index2 = NumVertices + new_offset;
-		points[index2+1].y = points[index].y;
-		points[index2 + 4].y = points[index + 2].y;
-		points[index2 + 5].y = points[index + 3].y;
-	}
-	//the up right squre change
-	if (z != 0 && x != 0) {
-		int new_offset = ((x+1) * 6) + ((z - 1) * (6 * grid_width));
-		int index2 = NumVertices + new_offset;
-		points[index2 + 1].y = points[index + 1].y;
-		points[index2 + 5].y = points[index + 5].y;
-	}
-	//the up left squre change
-	if (z != 0 && x != 0) {
-		int new_offset = ((x - 1) * 6) + ((z - 1) * (6 * grid_width));
-		int index2 = NumVertices + new_offset;
-		points[index2 +4].y = points[index+4].y;
 	}
 }
 

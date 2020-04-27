@@ -4,15 +4,10 @@
 #include <glew.h>
 #include <freeglut.h>
 #include "angel/Angel.h"
+#include <String>
+#include <vector>
 
 typedef Angel::vec4  point4;
-
-//the return type of the raise function to tell the terrian
-//that other grid segments need to be updated
-struct need_update {
-	need_update() {}
-	
-};
 
 class gridSegment {
 public:
@@ -23,8 +18,7 @@ public:
 
 	void print();
 	//raises the points in a square then returns a vec3 
-	need_update* raise(int corn, int  amount, point4* points);
-
+	std::vector<int*>  raise(int corn, int  amount, point4* points);
 
 	bool inited;
 	//the range of the points

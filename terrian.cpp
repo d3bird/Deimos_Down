@@ -251,9 +251,24 @@ void terrian1::createPoints() {
 	}
 	mapDebug();
 
-	map[5][5].raise(4, 10, points);
+	raise_map_segment(5, 4, 4, 20);
 }
 
+//generates a recursive request to  raise the terrian 
+void terrian1::raise_map_segment(int xloc, int yloc, int corn, int  amount) {
+
+	std::vector<int*> r_value = map[xloc][yloc].raise(corn, amount, points);
+
+	if (r_value.size() !=0) {
+		for (int i = 0; i < r_value.size(); i++) {
+			int n_xloc = r_value[i][0];
+			int n_yloc = r_value[i][1];
+			int n_corn = r_value[i][2];
+			terrian1::map[n_xloc][n_yloc].raise(n_corn, amount, points);
+			//delete[] r_value[i];//remove the allocated mem
+		}
+	}
+}
 
 void terrian1::mapDebug() {
 

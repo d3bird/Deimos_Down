@@ -35,7 +35,7 @@ private:
 	void create_data_structure();
 
 	void mapDebug();
-
+	void raise_map_segment(int xloc,int yloc,int corn, int  amount );
 	void setupBuffer();
 	void colorcube();
 	void MyQuad(int a, int b, int c, int d);

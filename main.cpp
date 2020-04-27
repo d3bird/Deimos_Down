@@ -107,6 +107,9 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
     case 'd':
         camera.ProcessKeyboard(RIGHT, deltaTime);
         break;
+    case ' ':
+        camera.ProcessKeyboard(UP_D, deltaTime);
+        break;
     case '1':
         World->toggleHud();
         break;

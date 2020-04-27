@@ -41,10 +41,13 @@ void gridSegment::print() {
 }
 
 //rases the corners 
-need_update* gridSegment::raise(int corn, int  amount, point4 *points) {
+std::vector<int*> gridSegment::raise(int corn, int  amount, point4 *points) {
+	std::vector<int*> output;
 	if (inited) {
+		int *data = new int[3];
 		switch (corn)
 		{
+			//rase just a corneer up
 		case 0:
 			points[nw].y = amount;
 			break;
@@ -63,14 +66,25 @@ need_update* gridSegment::raise(int corn, int  amount, point4 *points) {
 			points[sw].y = amount;
 			points[se].y = amount;
 
+			data[0] = x ;
+			data[1] = z - 1;
+			data[2] = 3;
+			//std::cout << "exporting data: " << data[0] << " " << data[1]<<" "<< data[2] << std::endl;
+			output.push_back(data);
+			/*data = new int[3];
+			data[0] = x;
+			data[1] = z - 1;
+			data[2] = 3;
+			output.push_back(data);*/
 			break;
 		default:
-			std::cout << "not a preprogrammed increment " << std::endl; 
+			std::cout << corn << " : not a preprogrammed increment " << std::endl;
+			std::cout << "inputed data: " << corn << " " << amount << std::endl;
 			break;
 		}
 	}
 	else {
 		std::cout << "not inited" << std::endl;
 	}
-	return NULL;
+	return output;
 }

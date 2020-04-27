@@ -22,12 +22,12 @@ public:
 
 	//functions
 
-	void draw(Shader* input_shader);
+	void draw();
 
 	void init();
 
 	void Toggleshow() { hide = !hide; }
-	void RenderText(Shader* s, std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
+	void RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
 
 
 	//setters and getters
@@ -35,8 +35,6 @@ public:
 	//set window height and width
 	void setWindowSize(int wheight, int wwidth) { Wheight = wheight; Wwidth = wwidth; }
 
-	void setTexture1(unsigned int i) { texture1 = i; }
-	void setTexture2(unsigned int i) { texture2 = i; }
 
 private:
 

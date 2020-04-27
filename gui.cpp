@@ -16,18 +16,9 @@ gui::~gui() {
 }
 
 //functions
-void gui::draw(Shader* input_shader) {
+void gui::draw() {
     if (!hide) {
-        if (!inited) {
-            std::cout << "has not inited" << std::endl;
-        }
-        if (input_shader == NULL) {
-            shader->use();
-        }
-        else {
-            input_shader->use();
-        }
-
+            
         shader->use();
         glBindVertexArray(VAO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -36,24 +27,23 @@ void gui::draw(Shader* input_shader) {
         glBindTexture(GL_TEXTURE_2D, texture1);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
-        //switch to the square vertex buffer
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
 
     //render text
     if (textworking) {
-        RenderText(Tshader, "This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-        RenderText(Tshader, "cerebrate engine text rendering", 500.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
+        RenderText("This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+        RenderText("cerebrate engine text rendering", 500.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
     }
 
 }
 
-void gui::RenderText(Shader* s, std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
+void gui::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
 {
     // Activate corresponding render state	
-    s->use();
-    glUniform3f(glGetUniformLocation(s->ID, "textColor"), color.x, color.y, color.z);
+    Tshader->use();
+    glUniform3f(glGetUniformLocation(Tshader->ID, "textColor"), color.x, color.y, color.z);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(tVAO);
 
@@ -105,9 +95,6 @@ void gui::init() {
          0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
         -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
         -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
-
-
-
     };
     unsigned int indices[] = {
         0, 1, 3, // first triangle
@@ -350,7 +337,7 @@ void gui::setImages() {
     //ourShader->use(); // don't forget to activate/use the shader before setting uniforms!
 
     //needs to add the textures to the gui
-    setTexture1(container);
-    setTexture2(face);
+    texture1 = container;
+    texture2 = face;
 
 }

@@ -19,7 +19,7 @@ world::world(int w, int h, int image_n) {
      sky = NULL;
 
 
-    debug = 4;//change this bit to debug different sections
+    debug = 3;//change this bit to debug different sections
 
     setupModels();
 }
@@ -55,7 +55,7 @@ void world::draw() {
     else if (debug == 3) {
         if (hud != NULL) {
             glEnable(GL_BLEND);
-            hud->draw(NULL);
+            hud->draw();
             glDisable(GL_BLEND);
         }
     }
@@ -81,7 +81,7 @@ void world::draw() {
 
         if (hud != NULL) {
             glEnable(GL_BLEND);
-            hud->draw(NULL);
+            hud->draw();
             glDisable(GL_BLEND);
         }
     }

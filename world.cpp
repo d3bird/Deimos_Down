@@ -17,7 +17,7 @@ world::world(int w, int h, int image_n) {
      ourModel2 = NULL;
      hud = NULL;
      sky = NULL;
-     terrian = NULL;
+
 
     debug = 4;//change this bit to debug different sections
 
@@ -61,14 +61,6 @@ void world::draw() {
     }
     else if (debug == 4) {
 
-       /* for (int i = 0; i < 5; i++) {
-            model = glm::mat4(1.0f);
-            model = glm::translate(model, glm::vec3(i * .27, 0, 0));
-            terrian->setModelTrans(model);
-
-            terrian->draw();
-        }*/
-
         map->draw();
     }
     else {
@@ -107,9 +99,9 @@ void world::update(float deltaTime) {
 //creates and inits the 3d models
 void world::setupModels() {
     if (debug == 0) {
-        terrian = new terrian_obj();
-        terrian->init();
-        terrian->setRes(Wwidth, Wheight);
+        
+        map = new terrian1();
+        map->setRes(Wwidth, Wheight);
         //create the skydome
         sky = new skydome();
         sky->reshape(Wwidth, Wheight);
@@ -133,9 +125,6 @@ void world::setupModels() {
         sky->reshape(Wwidth, Wheight);
     }
     else if (debug == 4) {
-        terrian = new terrian_obj();
-        terrian->init();
-        terrian->setRes(Wwidth, Wheight);
         map = new terrian1();
         map->setRes(Wwidth, Wheight);
     }
@@ -145,7 +134,6 @@ void world::setupModels() {
 void world::update_cam(glm::mat4 i) {
     if (debug == 0) {
         sky->setCam(i);
-        terrian->setVeiw(i);
         modelShader->use();
         modelShader->setMat4("view", i);
     }
@@ -157,7 +145,6 @@ void world::update_cam(glm::mat4 i) {
         sky->setCam(i);
     }
     else if (debug == 4) {
-        terrian->setVeiw(i);
         map->setVeiw(i);
     }
 }
@@ -166,7 +153,6 @@ void world::update_cam(glm::mat4 i) {
 void world::update_projectio(glm::mat4 i) {
     if (debug == 0) {
         sky->setProjection(i);
-        terrian->setProjectiont(i);
         modelShader->use();
         modelShader->setMat4("projection", i);
     }
@@ -178,7 +164,6 @@ void world::update_projectio(glm::mat4 i) {
         sky->setProjection(i);
     }
     else if (debug == 4) {
-        terrian->setProjectiont(i);
         map->setProjectiont(i);
     }
 }
@@ -189,13 +174,11 @@ void world::setScreenSize(int width, int height) {
      Wheight = height;
      if (debug == 0) {
          sky->reshape(Wwidth, Wheight);
-         terrian->setRes(Wwidth, Wheight);
      }
      else if (debug == 2) {
          sky->reshape(Wwidth, Wheight);
      }
      else if (debug == 4) {
-         terrian->setRes(Wwidth, Wheight);
          map->setRes(Wwidth, Wheight);
      }
 }

@@ -1,9 +1,11 @@
 #pragma once
 #include <glew.h>
-#include "angel/Angel.h"
 #include "Shader.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include <vector>
+#include "gridsegment.h"
 
 typedef Angel::vec4  point4;
 typedef Angel::vec4  color4;
@@ -21,7 +23,6 @@ public:
 	void setVeiw(glm::mat4 i) { shader->use(); shader->setMat4("model_view", i); }
 	void setModelTrans(glm::mat4 i) { shader->use(); shader->setMat4("model_trans", i); }
 
-
 	void setRes(int width, int height) { shader->use(); shader->setVec2("u_resolution", glm::vec2(width, height)); }
 
 
@@ -31,13 +32,17 @@ private:
 
 	void createPoints();
 
+	void create_data_structure();
+
+	void mapDebug();
+
 	void setupBuffer();
 	void colorcube();
 	void MyQuad(int a, int b, int c, int d);
 
 	GLuint get_points_size() { return sizeof(points); }
 
-
+	gridSegment** map;
 
 	Shader* shader;
 	GLuint vao;

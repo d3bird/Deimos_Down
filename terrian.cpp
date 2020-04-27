@@ -17,7 +17,7 @@ terrian1::terrian1() {
 	vertices[6] = point4(width, (height), -length, 1.0);
 	vertices[7] = point4(width, -(height), -length, 1.0);
 	
-	//createPoints();//ceate the points on the map
+	create_data_structure();
 	createPoints();
 	colorcube();//create the cube points
 	setupBuffer();//create the buffer
@@ -74,13 +74,26 @@ void terrian1::setupBuffer() {
 void terrian1::createPoints() {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+	//vars to create the map api
+	int x = 0;
+	int z = 0;
+	int points_start = -1;
+	int points_end = -1;
+	int nw = -1;
+	int ne = -1;
+	int sw = -1;
+	int se = -1;
+	int amt_thr_pnts = -1;
+	int* otherpoints = NULL;
+
+	//map[x][z] = gridSegment(points_start, points_end, x, z, nw, ne, sw, se, amt_thr_pnts, otherpoints);
 	int index = NumVertices;// starting index after  the cube
 
 	int width = 135;
 	int length = 135;
 	int height = 135;
 
-	int distance_value = 200;
+	int distance_value = 200;// *sin();
 	int start_height = -400;
 
 	int xoffset = 0;
@@ -95,21 +108,34 @@ void terrian1::createPoints() {
 	int xoffset_amount = xoffset * distance_value;
 	int zoffset_amount = zoffset * distance_value;
 
+	points_start = index;
+	points_end = index;
+
 	//create the base square
 	points[index] = point4(0, start_height, 0, 1.0);
+	nw = index;
 	index++;
 	points[index] = point4(0, start_height, distance_value, 1.0);
+	ne = index;
 	index++;
 	points[index] = point4(distance_value, start_height, 0, 1.0);
+	sw = index;
 	index++;
 	points[index] = point4(distance_value, start_height, distance_value, 1.0);
+	se = index;
 	index++;
 	points_generated += 4;
+	points_end += 4;
 	xoffset++;
 
-	for (int y = 0; y < grid_height; y++) {
-		for (int i = 0; i < grid_width-1; i++) {
+	amt_thr_pnts = 0;
+	map[x][z] = gridSegment(points_start, points_end, x, z, nw, ne, sw, se, amt_thr_pnts, otherpoints);
+	//map[x][z].print();
 
+	for (int y = 0; y < grid_height; y++) {
+		for (int i = 0; i < grid_width - 1; i++) {
+
+			//start_height = 200 * sin(i);
 			//small corrections need to make it form in a grid
 			if (going_left) {
 				i++;
@@ -119,33 +145,54 @@ void terrian1::createPoints() {
 				i--;
 				going_right = false;
 			}
-		
+			points_start = index;
+			points_end = index;
 			if (go_right) {
+				x++;
 				xoffset_amount = xoffset * distance_value;
 				zoffset_amount = zoffset * distance_value;
+				nw = ne;
+				sw = se;
+				
 				points[index] = point4(distance_value + xoffset_amount, start_height, 0 + zoffset_amount, 1.0);
+				ne = index;
 				index++;
 				points[index] = point4(distance_value + xoffset_amount, start_height, distance_value + zoffset_amount, 1.0);
+				se = index;
 				index++;
+				points_end += 4;
 				points_generated += 2;
 				xoffset++;
+				
 			}
 			else {
+				x--;
 				xoffset -= 1;
 				xoffset_amount = xoffset * distance_value;
 				zoffset_amount = zoffset * distance_value;
-
+				
+				ne = nw;
+				se = sw;
 				points[index] = point4(0 + xoffset_amount, start_height, 0 + zoffset_amount, 1.0);
+				nw = index;
 				index++;
 				points[index] = point4(0 + xoffset_amount, start_height, distance_value + zoffset_amount, 1.0);
+				sw = index;
 				index++;
-
+				points_end += 4;
 				points_generated += 2;
 			}
+
+			std::cout << x << "," << z << std::endl;
+			if (x < grid_width) {
+				map[x][z] = gridSegment(points_start, points_end, x, z, nw, ne, sw, se, amt_thr_pnts, otherpoints);
+			}
 		}
+		z++;
 		//check to makesure that it does not generate the start of the next row
 		if (y != grid_height - 1) {
 			if (go_right) {
+				x = grid_height - 1;
 				go_right = !go_right;
 				going_left = true;
 				//swapping to go the other way
@@ -162,8 +209,9 @@ void terrian1::createPoints() {
 				index++;
 
 				points_generated += 4;
+				//map[x][z] = gridSegment(points_start, points_end, x, z, nw, ne, sw, se, amt_thr_pnts, otherpoints);
 
-				//going to the right one cube
+		
 				xoffset -= 2;
 				xoffset_amount = xoffset * distance_value;
 				zoffset_amount = zoffset * distance_value;
@@ -173,8 +221,13 @@ void terrian1::createPoints() {
 				points[index] = point4(0 + xoffset_amount, start_height, distance_value + zoffset_amount, 1.0);
 				index++;
 				points_generated += 2;
+
+
+				//map[x][z] = gridSegment(points_start, points_end, x, z, nw, ne, sw, se, amt_thr_pnts, otherpoints);
+
 			}
 			else {
+				x = 1;
 				go_right = !go_right;
 				going_right = true;
 				zoffset++;
@@ -191,13 +244,39 @@ void terrian1::createPoints() {
 				index++;
 				points_generated += 4;
 
+				//map[x][z] = gridSegment(points_start, points_end, x, z, nw, ne, sw, se, amt_thr_pnts, otherpoints);
+
 			}
 		}
 	}
+	mapDebug();
+
+	map[5][5].raise(4, 10, points);
 }
 
 
+void terrian1::mapDebug() {
 
+	for (int y = 0; y < grid_height; y++) {
+		for (int x = 0; x < grid_width; x++) {
+			if (map[x][y].points_start == -1) {
+				std::cout << " * ";
+			}
+			else {
+				std::cout << " 1 ";
+			}
+		}
+		std::cout << std::endl;
+	}
+}
+
+//creates the data structure to manage all of the 
+void terrian1::create_data_structure() {
+	map = new gridSegment * [grid_width];
+	for (int i = 0; i < grid_width; i++) {
+		map[i] = new gridSegment[grid_height];
+	}
+}
 
 //creates the points for the highlighting cube
 void terrian1::colorcube() {

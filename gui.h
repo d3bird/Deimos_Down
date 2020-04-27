@@ -30,7 +30,11 @@ public:
 	void RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
 
 
-	//setters and getters
+	//sets the state of the gui to draw different things
+	void state_hud() { state = 0; }
+	void state_loading() { state = 1; }
+	void state_main_menu() { state = 2; }
+	void state_options() { state = 3; }
 
 	//set window height and width
 	void setWindowSize(int wheight, int wwidth) { Wheight = wheight; Wwidth = wwidth; }
@@ -38,10 +42,17 @@ public:
 
 private:
 
+	void draw_hud();
+	void draw_loading();
+	void draw_main_menu();
+	void draw_options();
+
 	void setImages();
 	void textRenderinginit();
 	bool inited;
 	bool hide;
+	int state;
+
 	//window vars
 	int Wheight;
 	int Wwidth;

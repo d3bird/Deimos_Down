@@ -135,26 +135,46 @@ extern "C" void myMenu(int value) {
 		break;
 	case 3:
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		break;
-	case 4:
-
-		break;
-	case 5:
-
-		break;
+        break;
 	default:
 		break;
 	}
 	glutPostRedisplay();
 }
 
+extern "C" void guiMenu(int value) {
+    switch (value) {
+    case 0:
+        GUI->state_hud();
+        break;
+    case 1:
+        GUI->state_main_menu();
+        break;
+    case 2:
+        GUI->state_options();
+        break;
+    case 3:
+        GUI->state_loading();
+        break;
+    default:
+        break;
+    }
+    glutPostRedisplay();
+}
+
 // Create menu items
 void setupMenu() {
-	glutCreateMenu(myMenu);
-	glutAddMenuEntry("toggle images", 0);
+
+    int guimenu = glutCreateMenu(guiMenu);
+    glutAddMenuEntry("draw hud", 0);
+    glutAddMenuEntry("draw main menu", 1);
+    glutAddMenuEntry("draw options menu", 2);
+    glutAddMenuEntry("draw loading screen", 3);
+
+	int main = glutCreateMenu(myMenu);
 	glutAddMenuEntry("toggle line draw", 1);
 	glutAddMenuEntry("toggle fill draw", 3);
-	glutAddMenuEntry("", 4);
+    glutAddSubMenu("gui options", guimenu);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 

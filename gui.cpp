@@ -8,6 +8,7 @@ gui::gui() {
     hide = false;
 	inited = false;
     textworking = false;
+    state = 0;
 }
 
 gui::~gui() {
@@ -17,6 +18,7 @@ gui::~gui() {
 
 //functions
 void gui::draw() {
+  //  std::cout << "drawling state " << state << std::endl;
     if (!hide) {
             
         shader->use();
@@ -27,8 +29,8 @@ void gui::draw() {
         glBindTexture(GL_TEXTURE_2D, texture1);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
-
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 12);
+   
     }
 
     //render text
@@ -36,8 +38,27 @@ void gui::draw() {
         RenderText("This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
         RenderText("cerebrate engine text rendering", 500.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
     }
+    else {
+        std::cout << "there was a problem rendering text" << std::endl;
+    }
 
 }
+
+void gui::draw_hud() {
+
+
+}
+void gui::draw_loading() {
+
+}
+void gui::draw_main_menu() {
+
+}
+void gui::draw_options() {
+
+
+}
+
 
 void gui::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
 {
@@ -88,17 +109,16 @@ void gui::init() {
     shader = new Shader("GUI.vs", "GUI.fs");
     Tshader = new Shader("text.vs", "text.fs");
     // set up vertex data (and buffer(s)) and configure vertex attributes
-// ------------------------------------------------------------------
+    // ------------------------------------------------------------------
     float vertices[] = {
         // positions          // colors           // texture coords
-         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
-    };
-    unsigned int indices[] = {
-        0, 1, 3, // first triangle
-        1, 2, 3  // second triangle
+
+        //loading screen
+         1.0f,  1.0f, -0.01f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+        -1.0f,  1.0f, -0.01f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f,  // top left 
+         1.0f, -1.0f, -0.01f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+        -1.0f, -1.0f, -0.01f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f // bottom left
+
     };
 
     float points[] = {
@@ -131,8 +151,6 @@ void gui::init() {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
@@ -155,12 +173,6 @@ void gui::init() {
     shader->setBool("Vtext", false);
     shader->setBool("Dtext", false);
     shader->setMat4("projection", projection);
-
-
-    //glActiveTexture(GL_TEXTURE0);
-    //glBindTexture(GL_TEXTURE_2D, texture1);
-    //glActiveTexture(GL_TEXTURE1);
-    //glBindTexture(GL_TEXTURE_2D, texture2);
 
 }
 

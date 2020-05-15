@@ -5,10 +5,17 @@ layout (location = 2) in vec2 aTexCoord;
 
 out vec3 ourColor;
 out vec2 TexCoord;
+out float state;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+
+uniform float m_state;
+
+uniform vec2 u_resolution;
+uniform float u_time;
+
 
 void main()
 {
@@ -17,4 +24,5 @@ void main()
 	//gl_Position = projection * view  * vec4(aPos, 1.0f);
 	ourColor = aColor;
 	TexCoord = vec2(aTexCoord.x, aTexCoord.y);
+	state = m_state;
 }

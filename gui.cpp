@@ -5,10 +5,10 @@ gui::gui() {
 	//def values
 	Wheight = 600;
 	Wwidth = 800;
-    hide = false;
 	inited = false;
     textworking = false;
-    state = 0;
+    state = 2;//main menu state
+    prevState = state;
 }
 
 gui::~gui() {
@@ -19,46 +19,70 @@ gui::~gui() {
 //functions
 void gui::draw() {
   //  std::cout << "drawling state " << state << std::endl;
-    if (!hide) {
-            
-        shader->use();
-        glBindVertexArray(VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        // bind textures on corresponding texture units
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture1);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, texture2);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 12);
    
-    }
+    shader->use();
+ 
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  
+    switch (state) {
+    case 0:
+        shader->setFloat("m_state", 0.0);
+        draw_hud();
+        break; 
+    case 1:
+        shader->setFloat("m_state", 0.1);
+        draw_loading();
+        break;
+    case 2:
+        shader->setFloat("m_state", 0.2);
+        draw_main_menu();
+        break;
+    case 3:
+        shader->setFloat("m_state", 0.3);
+        draw_options();
+        break;  
+    case 4:
+        shader->setFloat("m_state", 0.4);
+        draw_options();
+        break;
+    default://this is the test block, to test images
+        
+        
+        break;
+    }       
+}
 
-    //render text
-    if (textworking) {
-        RenderText("This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-        RenderText("cerebrate engine text rendering", 500.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
-    }
-    else {
-        std::cout << "there was a problem rendering text" << std::endl;
-    }
+ void gui::draw_hud() {
+
 
 }
 
-void gui::draw_hud() {
-
-
-}
-void gui::draw_loading() {
-
-}
-void gui::draw_main_menu() {
-
-}
-void gui::draw_options() {
-
+ void gui::draw_loading() {
+     glActiveTexture(GL_TEXTURE0);
+     glBindTexture(GL_TEXTURE_2D, texture1);
+     glActiveTexture(GL_TEXTURE1);
+     glBindTexture(GL_TEXTURE_2D, logo);
+     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+     RenderText("This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+     RenderText("cerebrate engine text rendering", 500.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
 
 }
 
+ void gui::draw_main_menu() {
+     glActiveTexture(GL_TEXTURE0);
+     glBindTexture(GL_TEXTURE_2D, texture1);
+     glActiveTexture(GL_TEXTURE1);
+     glBindTexture(GL_TEXTURE_2D, logo);
+     glDrawArrays(GL_TRIANGLE_STRIP, 4, 4);
+     RenderText("main menue text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+     RenderText("cerebrate engine text rendering", 500.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
+}
+
+ void gui::draw_options() {
+
+
+}
 
 void gui::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
 {
@@ -111,37 +135,23 @@ void gui::init() {
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     float vertices[] = {
-        // positions          // colors           // texture coords
+        // positions          // colors         // texture coords      menu state
 
-        //loading screen
-         1.0f,  1.0f, -0.01f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-        -1.0f,  1.0f, -0.01f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f,  // top left 
-         1.0f, -1.0f, -0.01f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-        -1.0f, -1.0f, -0.01f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f // bottom left
+        //loading screen (full screen)
+        1.0f,  1.0f, -0.01f,    1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   
+       -1.0f,  1.0f, -0.01f,    1.0f, 1.0f, 0.0f,   0.0f, 1.0f,
+        1.0f, -1.0f, -0.01f,    0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
+       -1.0f, -1.0f, -0.01f,    0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
+
+        // main menu
+        1.0f,   1.0f, -0.01f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
+        0.25f,  1.0f, -0.01f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f,
+        1.0f,  -1.0f, -0.01f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
+        0.25f, -1.0f, -0.01f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f
 
     };
 
-    float points[] = {
-    0.5f,  0.5f, 0.0f,
-    0.5f, -0.5f, 0.0f,
-    -0.5f, -0.5f, 0.0f,
-    -0.5f,  0.5f, 0.0f
-    };
-
-    float colors[] = {
-        1.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 1.0f,
-        1.0f, 1.0f, 0.0f,
-    };
-
-    float texcords[] = {
-        1.0f, 1.0f,
-        1.0f, 0.0f,
-        0.0f, 0.0f,
-        0.0f, 1.0f
-    };
-
+    
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
@@ -175,7 +185,6 @@ void gui::init() {
     shader->setMat4("projection", projection);
 
 }
-
 
 void gui::textRenderinginit() {
     std::cout << "setting up text rendering" << std::endl;
@@ -261,7 +270,7 @@ void gui::textRenderinginit() {
 //imports all of pictures need for the GUI
 void gui::setImages() {
     std::cout << "importing images for GUI" << std::endl;
-    unsigned int container, face, logo;
+    unsigned int container, face;
     // load and create a texture 
     // -------------------------
     // texture 1: container
@@ -278,7 +287,7 @@ void gui::setImages() {
     int width, height, nrChannels;
     stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
     // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
-    std::string textloc = "resources/textures/container.jpg";
+    std::string textloc = "resources/textures/CORE.jpg";
     unsigned char* data = stbi_load(textloc.c_str(), &width, &height, &nrChannels, 0);
     if (data)
     {
@@ -291,6 +300,8 @@ void gui::setImages() {
         exit(1);
     }
     stbi_image_free(data);
+
+
     // texture 2: containe
     // ---------
     glGenTextures(1, &container);
@@ -318,6 +329,7 @@ void gui::setImages() {
         exit(1);
     }
     stbi_image_free(data);
+
     // texture 2
      // ---------
     glGenTextures(1, &face);
@@ -351,5 +363,17 @@ void gui::setImages() {
     //needs to add the textures to the gui
     texture1 = container;
     texture2 = face;
+
+    
+}
+
+void gui::Toggleshow() {
+    if (state == -1) {
+        state = prevState;
+    }
+    else {
+        prevState = state;
+        state = -1;
+    }
 
 }

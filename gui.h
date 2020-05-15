@@ -26,7 +26,7 @@ public:
 
 	void init();
 
-	void Toggleshow() { hide = !hide; }
+	void Toggleshow();
 	void RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
 
 
@@ -42,24 +42,30 @@ public:
 
 private:
 
-	void draw_hud();
-	void draw_loading();
-	void draw_main_menu();
-	void draw_options();
+	 void draw_hud();
+	 void draw_loading();
+	 void draw_main_menu();
+	 void draw_options();
 
 	void setImages();
 	void textRenderinginit();
 	bool inited;
-	bool hide;
 	int state;
+	int prevState;
 
 	//window vars
 	int Wheight;
 	int Wwidth;
 
-	//graphics buffers for the shapes 
+	//graphics buffers and textures
 	unsigned int VBO, VAO, EBO;
-	unsigned int texture1, texture2;
+	//test textures
+	unsigned int texture1; // container
+	unsigned int texture2;// face
+
+	unsigned int logo;
+	unsigned int title;
+	unsigned int loading_screen;
 
 	std::string texPath1;
 	std::string texPath2;

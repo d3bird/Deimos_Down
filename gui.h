@@ -22,7 +22,7 @@ public:
 
 	//functions
 
-	void draw();
+	void draw(float time);
 
 	void init();
 
@@ -37,15 +37,19 @@ public:
 	void state_options() { state = 3; }
 
 	//set window height and width
-	void setWindowSize(int wheight, int wwidth) { Wheight = wheight; Wwidth = wwidth; }
+	void setWindowSize(int wheight, int wwidth) {
+		Wheight = wheight; Wwidth = wwidth; update_shader = true;
+	}
 
 
 private:
 
-	 void draw_hud();
-	 void draw_loading();
-	 void draw_main_menu();
-	 void draw_options();
+	void draw_hud();
+	void draw_loading();
+	void draw_main_menu();
+	void draw_options();
+
+	void update_shader_var();
 
 	void setImages();
 	void textRenderinginit();
@@ -56,6 +60,8 @@ private:
 	//window vars
 	int Wheight;
 	int Wwidth;
+
+	bool update_shader;
 
 	//graphics buffers and textures
 	unsigned int VBO, VAO, EBO;

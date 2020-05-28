@@ -9,6 +9,7 @@ gui::gui() {
     textworking = false;
     state = 2;//main menu state
     prevState = state;
+    
 }
 
 gui::~gui() {
@@ -17,7 +18,7 @@ gui::~gui() {
 }
 
 //functions
-void gui::draw() {
+void gui::draw(float time) {
   //  std::cout << "drawling state " << state << std::endl;
    
     shader->use();
@@ -25,6 +26,10 @@ void gui::draw() {
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
   
+    
+    update_shader_var();
+    
+
     switch (state) {
     case 0:
         shader->setFloat("m_state", 0.0);
@@ -375,5 +380,10 @@ void gui::Toggleshow() {
         prevState = state;
         state = -1;
     }
+}
+
+void gui::update_shader_var() {
+
+
 
 }

@@ -37,6 +37,7 @@ public:
 
 private:
 
+
 	void setupModels();
 	int debug;// 0 for normal
 				// 1 for objects
@@ -48,6 +49,8 @@ private:
 	int Wwidth;
 	int Wheight;
 	std::string name;
+
+	float time;
 
 	int number_images;
 	int image_lastused;

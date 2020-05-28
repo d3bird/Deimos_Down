@@ -78,8 +78,8 @@ void idle() {
     //cout << deltaTime << endl;
 
    World->update_cam(camera.GetViewMatrix());
-    World->update(deltaTime);
-    glutPostRedisplay();
+   World->update(deltaTime);
+   glutPostRedisplay();
 }
 
 //if the mouse was clicked

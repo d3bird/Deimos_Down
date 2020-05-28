@@ -4,19 +4,19 @@
 
 
 world::world(int w, int h, int image_n) {
-	Wwidth = w;
-	Wheight = h;
-	name = "World1";
+    Wwidth = w;
+    Wheight = h;
+    name = "World1";
 
-	number_images = image_n;
-	image_lastused = 0;
+    number_images = image_n;
+    image_lastused = 0;
     inited = false;
     hud = NULL;
-     modelShader = NULL;
-     ourModel = NULL;
-     ourModel2 = NULL;
-     hud = NULL;
-     sky = NULL;
+    modelShader = NULL;
+    ourModel = NULL;
+    ourModel2 = NULL;
+    hud = NULL;
+    sky = NULL;
 
 
     debug = 3;//change this bit to debug different sections
@@ -55,7 +55,7 @@ void world::draw() {
     else if (debug == 3) {
         if (hud != NULL) {
             glEnable(GL_BLEND);
-            hud->draw();
+            hud->draw(time);
             glDisable(GL_BLEND);
         }
     }
@@ -81,7 +81,7 @@ void world::draw() {
 
         if (hud != NULL) {
             glEnable(GL_BLEND);
-            hud->draw();
+            hud->draw(time);
             glDisable(GL_BLEND);
         }
     }
@@ -93,6 +93,7 @@ void world::update(float deltaTime) {
     if (debug == 0 || debug == 2) {
         sky->update();
     }
+    time = deltaTime;
 }
 
 

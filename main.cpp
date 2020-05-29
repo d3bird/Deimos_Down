@@ -26,7 +26,7 @@ world* World;
 sound_engine* sound;
 gui* GUI;
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera* camera;
 float lastX = Wheight / 2.0f;
 float lastY = Wwidth / 2.0f;
 bool firstMouse = true;
@@ -37,7 +37,7 @@ float lastFrame = 0.0f;
 
 
 extern "C" void reshape(int width, int height) {
-    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)Wwidth / (float)Wheight, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), (float)Wwidth / (float)Wheight, 0.1f, 100.0f);
     World->setScreenSize(Wwidth, Wheight);
     World->update_projectio(projection);
 }
@@ -57,7 +57,7 @@ extern "C" void motion(int xpos, int ypos){
     lastX = xpos;
     lastY = ypos;
 
-    camera.ProcessMouseMovement(xoffset, yoffset);
+    camera->ProcessMouseMovement(xoffset, yoffset);
 	glutPostRedisplay();
 }
 
@@ -77,7 +77,7 @@ void idle() {
     lastFrame = currentFrame;
     //cout << deltaTime << endl;
 
-   World->update_cam(camera.GetViewMatrix());
+   World->update_cam(camera->GetViewMatrix());
    World->update(deltaTime);
    glutPostRedisplay();
 }
@@ -96,19 +96,19 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
         exit(0);
         break;
     case 'w':
-        camera.ProcessKeyboard(FORWARD, deltaTime);
+        camera->ProcessKeyboard(FORWARD, deltaTime);
         break;
     case 's':
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
+        camera->ProcessKeyboard(BACKWARD, deltaTime);
         break;
     case 'a':
-        camera.ProcessKeyboard(LEFT, deltaTime);
+        camera->ProcessKeyboard(LEFT, deltaTime);
         break;
     case 'd':
-        camera.ProcessKeyboard(RIGHT, deltaTime);
+        camera->ProcessKeyboard(RIGHT, deltaTime);
         break;
     case ' ':
-        camera.ProcessKeyboard(UP_D, deltaTime);
+        camera->ProcessKeyboard(UP_D, deltaTime);
         break;
     case '1':
         World->toggleHud();
@@ -195,13 +195,15 @@ void myinit() {
     cam = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));;
     cam->printSpeed();
 
+    camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
+
     std::cout << "openGL version " << glGetString(GL_VERSION) << std::endl;
     std::cout << "glut version " << glutGet(GLUT_VERSION) << std::endl;
 
-    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)Wwidth / (float)Wheight, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), (float)Wwidth / (float)Wheight, 0.1f, 100.0f);
 
     World = new world(Wwidth, Wheight, 2);
-    World->update_cam(camera.GetViewMatrix());
+    World->update_cam(camera->GetViewMatrix());
     World->update_projectio(projection);
     GUI = new gui();
     GUI->setWindowSize(Wwidth, Wheight);
@@ -214,7 +216,7 @@ void myinit() {
 }
 
 void mouse_scroll(int xoffset, int yoffset, int temp, int temp2) {
-    camera.ProcessMouseScroll(yoffset);
+    camera->ProcessMouseScroll(yoffset);
 }
 
 int main(int argc, char** argv) {

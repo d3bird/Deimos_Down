@@ -5,6 +5,7 @@ keyboard::keyboard(Camera* c) {
 	deltaTime = 0;
 	camera = c;
 	def_layout();
+	add_debug_layout();
 }
 
 keyboard::~keyboard() {
@@ -13,21 +14,13 @@ keyboard::~keyboard() {
 
 void keyboard::process_key(unsigned char key, int mousex, int mousey) {
 
-	//std::map<unsigned char, int>::iterator it2;
-	//for (it2 = keys.begin(); it2 != keys.end(); ++it2) {
-	//	std::cout << it2->first << " => " << it2->second << '\n';
-	//}
 
 	std::map<unsigned char, int>::iterator it;
 	it = keys.find(key);
 	if (it == keys.end()) {
-		std::cout << key<<" not bounded" << std::endl;
 		return;
 	}
-	else {
-		std::cout << key << " was bounded to "<< keys.find(key)->second << std::endl;
-	}
-	std::cout << "prossecing key" << std::endl;
+
 	int command = it->second;
 
 	switch (command){
@@ -52,6 +45,9 @@ void keyboard::process_key(unsigned char key, int mousex, int mousey) {
 	case 6:
 		down();
 		break;
+	case 7:
+		print_keyboard_shortcuts();
+		break;
 	default:
 		std::cout << key << " ca" << std::endl;
 		break;
@@ -59,22 +55,21 @@ void keyboard::process_key(unsigned char key, int mousex, int mousey) {
 	
 }
 
-void keyboard::bind_key(unsigned char key, int custom) {//for the custom functions
-	std::map<char, int>::iterator it;
-	
-	
+void keyboard::bind_key(unsigned char key, int func) {//for the custom functions
+	std::map<unsigned char, int>::iterator it;
+	it = keys.find(key);
+	if (it == keys.end()) {
+		keys.insert(std::pair<unsigned char, int>(key, func));
+	}
+	else {
+		std::cout << "key already has a bound key, overriding " << std::endl;
+	}
 }
 
 void keyboard::def_layout() {
-	/*keys['27'] = 0;
-	keys['q'] = 0;
-	keys['w'] = 1;
-	keys['s'] = 2;
-	keys['a'] = 3;
-	keys['d'] = 4;
-	keys[' '] = 5;
-	keys['z'] = 6;*/
-	std::cout << "creating a keybpard layout" << std::endl;
+
+	std::cout << "seting up def keyboard layout" << std::endl;
+	keys.insert(std::pair<unsigned char, int>(27, 0));//the esc key
 	keys.insert(std::pair<unsigned char, int>('q', 0));
 	keys.insert(std::pair<unsigned char, int>('w', 1));
 	keys.insert(std::pair<unsigned char, int>('s', 2));
@@ -82,24 +77,20 @@ void keyboard::def_layout() {
 	keys.insert(std::pair<unsigned char, int>('d', 4));
 	keys.insert(std::pair<unsigned char, int>(' ', 5));
 	keys.insert(std::pair<unsigned char, int>('z', 6));
-	std::map<unsigned char, int>::iterator it;
-	for (it = keys.begin(); it != keys.end(); ++it) {
-		std::cout << it->first << " => " << it->second << '\n';
-	}
-	unsigned char in = 'a';
-	it = keys.find(in);
-	if (it == keys.end()) {
-		std::cout << 'a' << " not bounded" << std::endl;
-		return;
-	}
-	else {
-		std::cout << keys.find('a')->second << " was bounded" << std::endl;
-	}
-	std::cout << std::endl;
-	std::cout << std::endl;
-	std::cout << std::endl;
+
+	//std::map<unsigned char, int>::iterator it;
+	//for (it = keys.begin(); it != keys.end(); ++it) {
+	//	std::cout << it->first << " => " << it->second << '\n';
+	//}
+
+	std::cout <<"finished binding keys"<< std::endl;
 }
 
+void keyboard::add_debug_layout() {
+	std::cout << "adding in debug keys" << std::endl;
+	keys.insert(std::pair<unsigned char, int>('1', 7));
+	std::cout << "finnished ading debug keys" << std::endl;
+}
 
 //if there is ever a problem with the keyboard layout this can work as backup
 void keyboard::old_hard_coded_solution(unsigned char key) {
@@ -134,4 +125,40 @@ void keyboard::old_hard_coded_solution(unsigned char key) {
 
 	return;
 
+}
+
+//debug functions
+void keyboard::print_keyboard_shortcuts() {
+	std::map<unsigned char, int>::iterator it2;
+	for (it2 = keys.begin(); it2 != keys.end(); ++it2) {
+		std::string translation = "none";
+		switch (it2->second) {
+		case 0:
+			translation = "stop program";
+			break;
+		case 1:
+			translation = "move cam forward";
+			break;
+		case 2:
+			translation = "move cam backward";
+			break;
+		case 3:
+			translation = "move cam left";
+			break;
+		case 4:
+			translation = "move cam right";
+			break;
+		case 5:
+			translation = "move cam up";
+			break;
+		case 6:
+			translation = "move cam down";
+			break;
+		case 7:
+			translation = "print keyboard layout";
+			break;
+		}
+
+		std::cout << it2->first << " => " << translation << '\n';
+	}
 }

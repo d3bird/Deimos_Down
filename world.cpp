@@ -19,7 +19,7 @@ world::world(int w, int h, int image_n) {
     sky = NULL;
 
 
-    debug = 3;//change this bit to debug different sections
+    debug = 0;//change this bit to debug different sections
 
     setupModels();
 }

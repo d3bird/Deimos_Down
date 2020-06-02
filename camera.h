@@ -20,9 +20,9 @@ enum Camera_Movement {
 };
 
 // Default camera values
-const float YAW = -90.0f;
-const float PITCH = 0.0f;
-float SPEED = 0.01f;
+const static float YAW = -90.0f;
+const static float PITCH = 0.0f;
+const float SPEED = 0.01f;
 const float SENSITIVITY = 0.1f;
 const float ZOOM = 45.0f;
 
@@ -133,5 +133,7 @@ private:
         Right = glm::normalize(glm::cross(Front, WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
         Up = glm::normalize(glm::cross(Right, Front));
     }
+
+
 };
 #endif

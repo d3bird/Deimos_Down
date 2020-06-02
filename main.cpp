@@ -11,6 +11,7 @@
 #include "skydome.h"
 #include "world.h"
 #include "sound_engine.h"
+#include "keyboard.h"
 
 using std::cout;
 using std::endl;
@@ -21,12 +22,13 @@ int Wwidth = 800;
 
 unsigned int VBO, VAO, EBO;
 
-Camera* cam;
 world* World;
 sound_engine* sound;
 gui* GUI;
 // camera
 Camera* camera;
+keyboard* input;
+
 float lastX = Wheight / 2.0f;
 float lastY = Wwidth / 2.0f;
 bool firstMouse = true;
@@ -89,35 +91,9 @@ extern "C" void mouse(int btn, int state, int xpos, int ypos) {
 
 
 extern "C" void mykey(unsigned char key, int mousex, int mousey) {
-	//float cameraSpeed = 2.5f;
-    switch (key) {
-    case 27://hitting the escape key
-    case 'q':
-        exit(0);
-        break;
-    case 'w':
-        camera->ProcessKeyboard(FORWARD, deltaTime);
-        break;
-    case 's':
-        camera->ProcessKeyboard(BACKWARD, deltaTime);
-        break;
-    case 'a':
-        camera->ProcessKeyboard(LEFT, deltaTime);
-        break;
-    case 'd':
-        camera->ProcessKeyboard(RIGHT, deltaTime);
-        break;
-    case ' ':
-        camera->ProcessKeyboard(UP_D, deltaTime);
-        break;
-    case '1':
-        World->toggleHud();
-        break;
-    default:
-        // glutSetWindowTitle(key);
-        break;
-    }
-
+    input->upadate_time(deltaTime);
+    input->process_key(key, mousex, mousey);
+    return;
 }
 
 extern "C" void menustatus(int status, int x, int y) {
@@ -192,9 +168,6 @@ void myinit() {
     glClearColor(0.0, 0.0, 0.0, 1.0); //  background
     glutWarpPointer(Wwidth / 2, Wheight / 2);
 
-    cam = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));;
-    cam->printSpeed();
-
     camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
     std::cout << "openGL version " << glGetString(GL_VERSION) << std::endl;
@@ -210,9 +183,9 @@ void myinit() {
     GUI->init();
     World->importGUI(GUI);
     
-
+    std::cout << "creating keyboard layout" << std::endl;
     //sound = new sound_engine();
-
+    input = new keyboard(camera);
 }
 
 void mouse_scroll(int xoffset, int yoffset, int temp, int temp2) {
